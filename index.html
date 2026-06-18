@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Clock · Pomodoro Style</title>
+    <!-- Font Awesome for clean icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e9f1f8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .clock-card {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2rem 2rem 2.2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 i {
+            color: #3b82f6;
+            font-size: 1.6rem;
+        }
+
+        .timer-display {
+            background: #ffffffcc;
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+        }
+
+        #timer {
+            font-size: 4.8rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            color: #0b1e33;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .timer-controls button {
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            padding: 0.3rem 0.6rem;
+            border-radius: 40px;
+            background: #f1f5f9;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+        }
+
+        .timer-controls button:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+            transform: scale(1.02);
+        }
+
+        .timer-controls button:active {
+            transform: scale(0.94);
+        }
+
+        .timer-controls .primary-btn {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 8px 18px -6px #3b82f680;
+        }
+
+        .timer-controls .primary-btn:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: #f8fafc;
+            padding: 1rem 1.2rem;
+            border-radius: 40px;
+            margin-bottom: 2rem;
+            border: 1px solid #e9edf2;
+        }
+
+        .duration-control {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .duration-control label {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+
+        .duration-control input {
+            width: 70px;
+            padding: 0.4rem 0.2rem 0.4rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #d1d9e6;
+            background: white;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #0b1e33;
+            outline: none;
+            transition: 0.15s;
+        }
+
+        .duration-control input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px #3b82f630;
+        }
+
+        .alarm-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alarm-selector i {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .alarm-selector select {
+            padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #d1d9e6;
+            background: white;
+            font-size: 0.9rem;
+            color: #0b1e33;
+            outline: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 8"><path fill="%23334155" d="M6 8L0 0h12z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 12px;
+            cursor: pointer;
+        }
+
+        .event-section {
+            margin-top: 0.5rem;
+        }
+
+        .event-input-area {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .event-input-area input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #d1d9e6;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.15s;
+        }
+
+        .event-input-area input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px #3b82f630;
+        }
+
+        .event-input-area button {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0 1.3rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 6px 14px -4px #3b82f670;
+        }
+
+        .event-input-area button:hover {
+            background: #2563eb;
+            transform: scale(1.02);
+        }
+
+        .event-list {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 24px;
+            background: #f1f5f9;
+            padding: 0.4rem 0.2rem;
+        }
+
+        .event-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 1rem 0.7rem 1.2rem;
+            background: white;
+            margin: 0.3rem 0.4rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9edf2;
+            transition: 0.1s;
+        }
+
+        .event-list li:hover {
+            background: #fafcff;
+            border-color: #cbd5e1;
+        }
+
+        .event-name {
+            font-weight: 500;
+            color: #0b1e33;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .event-name i {
+            color: #3b82f6;
+            font-size: 0.9rem;
+            width: 1.2rem;
+        }
+
+        .event-time {
+            font-size: 0.9rem;
+            background: #eef2f6;
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
+            color: #1e293b;
+            font-weight: 450;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .event-actions button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 30px;
+            transition: 0.1s;
+        }
+
+        .event-actions .delete-btn:hover {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .event-actions .play-btn:hover {
+            color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .empty-events {
+            text-align: center;
+            color: #94a3b8;
+            padding: 1.2rem 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-credit {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.2rem;
+        }
+
+        /* scroll style */
+        .event-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .event-list::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 20px;
+        }
+
+        .event-list::-webkit-scrollbar-thumb {
+            background: #b9c7da;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="clock-card">
+    <h1>
+        <i class="fas fa-clock"></i> Event Clock
+    </h1>
+
+    <!-- Timer display -->
+    <div class="timer-display">
+        <div id="timer">25:00</div>
+        <div class="timer-controls">
+            <button id="playPauseBtn" class="primary-btn" aria-label="Play or pause timer">
+                <i class="fas fa-play"></i>
+            </button>
+            <button id="resetBtn" aria-label="Reset timer">
+                <i class="fas fa-undo-alt"></i>
+            </button>
+            <button id="stopAlarmBtn" aria-label="Stop alarm" style="background: #fee2e2; color: #b91c1c;">
+                <i class="fas fa-bell-slash"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings: duration + alarm sound -->
+    <div class="settings-row">
+        <div class="duration-control">
+            <label for="workDuration"><i class="fas fa-hourglass-half"></i> Work</label>
+            <input type="number" id="workDuration" value="25" min="1" max="120" step="1">
+            <span style="color:#475569; font-size:0.85rem;">min</span>
+        </div>
+        <div class="alarm-selector">
+            <i class="fas fa-volume-up"></i>
+            <select id="alarmSound">
+                <option value="default">Egg Timer Vibes</option>
+                <option value="flow">Flow</option>
+                <option value="iphone">iPhone Note</option>
+                <option value="clear">Clear Tone</option>
+                <option value="lg">LG Note</option>
+                <option value="telegram">Telegram Note</option>
+                <option value="spongebob">Spongebob Note</option>
+                <option value="message">Message Tones</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Events: named tasks -->
+    <div class="event-section">
+        <div class="event-input-area">
+            <input type="text" id="eventNameInput" placeholder="Event name (e.g. Design review)" />
+            <button id="addEventBtn"><i class="fas fa-plus-circle"></i> Add</button>
+        </div>
+
+        <ul class="event-list" id="eventList">
+            <li class="empty-events"><i class="fas fa-calendar-plus"></i> No events yet — add one!</li>
+        </ul>
+    </div>
+    <div class="footer-credit">
+        <i class="fas fa-tasks"></i> Named events · Pomodoro style
+    </div>
+</div>
+
+<script>
+    (function() {
+        "use strict";
+
+        // ----- DOM refs -----
+        const timerDisplay = document.getElementById('timer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const stopAlarmBtn = document.getElementById('stopAlarmBtn');
+        const workDurationInput = document.getElementById('workDuration');
+        const alarmSoundSelect = document.getElementById('alarmSound');
+        const eventNameInput = document.getElementById('eventNameInput');
+        const addEventBtn = document.getElementById('addEventBtn');
+        const eventList = document.getElementById('eventList');
+
+        // ----- State -----
+        let timerInterval = null;
+        let isRunning = false;
+        let isPaused = false; // not used directly, but helps readability
+
+        // Time in seconds
+        let totalSeconds = 25 * 60;      // default 25 min
+        let remainingSeconds = totalSeconds;
+
+        // Event store: array of { id, name, durationSeconds, createdAt }
+        let events = [];
+        let nextEventId = 1;
+
+        // Alarm audio context (web audio)
+        let audioCtx = null;
+        let alarmOscillator = null;
+        let alarmGainNode = null;
+        let isAlarmPlaying = false;
+
+        // ----- Helper: format time MM:SS -----
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // ----- Update display & document title -----
+        function updateDisplay() {
+            timerDisplay.textContent = formatTime(remainingSeconds);
+            document.title = `⏱ ${formatTime(remainingSeconds)} · Event Clock`;
+        }
+
+        // ----- Stop alarm sound -----
+        function stopAlarmSound() {
+            if (audioCtx && alarmOscillator) {
+                try {
+                    alarmOscillator.stop();
+                    alarmOscillator.disconnect();
+                    alarmGainNode.disconnect();
+                } catch (_) { /* ignore */ }
+            }
+            isAlarmPlaying = false;
+            audioCtx = null;
+            alarmOscillator = null;
+            alarmGainNode = null;
+        }
+
+        // ----- Play alarm sound (web audio) -----
+        function playAlarmSound() {
+            if (isAlarmPlaying) return;
+            try {
+                stopAlarmSound(); // clean previous
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                alarmOscillator = audioCtx.createOscillator();
+                alarmGainNode = audioCtx.createGain();
+                alarmOscillator.type = 'square';
+                alarmOscillator.frequency.value = 720;
+                alarmGainNode.gain.value = 0.28;
+                alarmOscillator.connect(alarmGainNode);
+                alarmGainNode.connect(audioCtx.destination);
+
+                // mod for "alarm" effect: frequency wobble
+                const now = audioCtx.currentTime;
+                alarmOscillator.frequency.setValueAtTime(720, now);
+                alarmOscillator.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                alarmOscillator.frequency.exponentialRampToValueAtTime(640, now + 0.3);
+                // repeat via timeout
+                alarmOscillator.start(now);
+                isAlarmPlaying = true;
+
+                // Auto stop after 6 seconds (safety)
+                setTimeout(() => {
+                    if (isAlarmPlaying) stopAlarmSound();
+                }, 7000);
+            } catch (e) {
+                console.warn('Alarm could not be played:', e);
+                // fallback: beep using oscillator (already tried)
+            }
+        }
+
+        // ----- Timer logic -----
+        function tick() {
+            if (remainingSeconds <= 0) {
+                // timer finished
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isRunning = false;
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                // Play alarm
+                playAlarmSound();
+                // reset to total (so it shows 0:00 and then reset later)
+                // we keep remaining at 0, display shows 00:00
+                updateDisplay();
+                return;
+            }
+
+            remainingSeconds--;
+            updateDisplay();
+
+            // if remaining is 0, next tick will trigger finish
+            if (remainingSeconds === 0) {
+                // immediately stop interval, but let next tick handle
+                // we force a clear and call finish
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isRunning = false;
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                // Play alarm
+                playAlarmSound();
+                updateDisplay();
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            if (remainingSeconds <= 0) {
+                // if timer at 0, reset to total before start
+                remainingSeconds = totalSeconds;
+                updateDisplay();
+            }
+            isRunning = true;
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            timerInterval = setInterval(tick, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            isRunning = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            stopAlarmSound();
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+            isRunning = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+
+        // ----- Toggle play/pause -----
+        function togglePlayPause() {
+            // if alarm is playing, stop it on play/pause
+            if (isAlarmPlaying) stopAlarmSound();
+
+            if (isRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        // ----- Load total duration from input -----
+        function loadDurationFromInput() {
+            let val = parseInt(workDurationInput.value, 10);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 120) val = 120;
+            workDurationInput.value = val;
+            totalSeconds = val * 60;
+            // if timer is not running and remaining is at previous total or 0, update remaining
+            if (!isRunning) {
+                // if remaining is 0 or equal to old total, set to new total
+                if (remainingSeconds === 0 || remainingSeconds === totalSeconds) {
+                    remainingSeconds = totalSeconds;
+                } else {
+                    // if custom remaining, keep it but clamp
+                    if (remainingSeconds > totalSeconds) remainingSeconds = totalSeconds;
+                }
+                updateDisplay();
+            }
+        }
+
+        // ----- Events (named) -----
+        function renderEvents() {
+            eventList.innerHTML = '';
+            if (events.length === 0) {
+                const empty = document.createElement('li');
+                empty.className = 'empty-events';
+                empty.innerHTML = '<i class="fas fa-calendar-plus"></i> No events yet — add one!';
+                eventList.appendChild(empty);
+                return;
+            }
+
+            // sort by creation (newest last)
+            const sorted = [...events].sort((a, b) => a.id - b.id);
+            for (const ev of sorted) {
+                const li = document.createElement('li');
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'event-name';
+                nameSpan.innerHTML = `<i class="fas fa-circle-check"></i> ${escapeHtml(ev.name)}`;
+
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'event-time';
+                timeSpan.textContent = formatTime(ev.durationSeconds);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'event-actions';
+
+                // Play button (set timer to this event's duration)
+                const playBtn = document.createElement('button');
+                playBtn.className = 'play-btn';
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.title = 'Set timer to this event duration';
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // set timer to this event duration
+                    if (isRunning) pauseTimer();
+                    if (isAlarmPlaying) stopAlarmSound();
+                    totalSeconds = ev.durationSeconds;
+                    remainingSeconds = totalSeconds;
+                    workDurationInput.value = Math.floor(totalSeconds / 60);
+                    updateDisplay();
+                });
+
+                // Delete button
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerHTML = '<i class="fas fa-trash-can"></i>';
+                delBtn.title = 'Remove event';
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    events = events.filter(e => e.id !== ev.id);
+                    renderEvents();
+                });
+
+                actionsDiv.appendChild(playBtn);
+                actionsDiv.appendChild(delBtn);
+
+                li.appendChild(nameSpan);
+                li.appendChild(timeSpan);
+                li.appendChild(actionsDiv);
+                eventList.appendChild(li);
+            }
+        }
+
+        // Simple escape
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function addEvent() {
+            const name = eventNameInput.value.trim();
+            if (name === '') {
+                alert('Please enter an event name.');
+                return;
+            }
+
+            // Use current total seconds as duration for the event
+            const duration = totalSeconds;
+
+            events.push({
+                id: nextEventId++,
+                name: name,
+                durationSeconds: duration,
+                createdAt: Date.now()
+            });
+
+            eventNameInput.value = '';
+            renderEvents();
+        }
+
+        // ----- Alarm stop button -----
+        function handleStopAlarm() {
+            stopAlarmSound();
+            // if timer is at 0 and not running, reset to total for convenience
+            if (remainingSeconds === 0 && !isRunning) {
+                remainingSeconds = totalSeconds;
+                updateDisplay();
+            }
+        }
+
+        // ----- Reset button override (also stop alarm) -----
+        function handleReset() {
+            stopAlarmSound();
+            resetTimer();
+        }
+
+        // ----- Input: duration change -----
+        workDurationInput.addEventListener('change', function() {
+            loadDurationFromInput();
+        });
+
+        // ----- Init -----
+        function init() {
+            // default event
+            events.push({
+                id: nextEventId++,
+                name: 'Focus session',
+                durationSeconds: 25 * 60,
+                createdAt: Date.now()
+            });
+            events.push({
+                id: nextEventId++,
+                name: 'Quick task',
+                durationSeconds: 15 * 60,
+                createdAt: Date.now()
+            });
+            renderEvents();
+
+            // set total seconds
+            totalSeconds = 25 * 60;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+
+            // Event listeners
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            resetBtn.addEventListener('click', handleReset);
+            stopAlarmBtn.addEventListener('click', handleStopAlarm);
+            addEventBtn.addEventListener('click', addEvent);
+            eventNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addEvent();
+            });
+
+            // audio context unlock (required by chrome)
+            document.addEventListener('click', function unlockAudio() {
+                if (audioCtx === null) {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        if (ctx.state === 'suspended') ctx.resume();
+                    } catch (_) {}
+                }
+            }, { once: true });
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
