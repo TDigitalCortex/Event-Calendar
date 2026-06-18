@@ -482,11 +482,96 @@
             display: block;
         }
 
+        /* --- Date Header for Schedule View --- */
+        .schedule-date-header {
+            display: flex;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+            background: #f8fafc;
+            border-radius: 24px 24px 0 0;
+            padding: 0.5rem 0.5rem 0.3rem;
+        }
+
+        .schedule-date-header .date-header-item {
+            flex: 1;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            padding: 0.3rem 0.5rem;
+            min-height: 50px;
+            border: 1px solid #e9edf2;
+            border-bottom: none;
+        }
+
+        .schedule-date-header .date-header-item.today-header {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .schedule-date-header .date-header-item .date-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+
+        .schedule-date-header .date-header-item .date-label.today-label {
+            color: #2563eb;
+        }
+
+        .schedule-date-header .date-header-item .header-events {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .schedule-date-header .date-header-item .header-events .header-event {
+            font-size: 0.55rem;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.05rem 0.3rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+
+        .schedule-date-header .date-header-item .header-events .header-event:hover {
+            background: #bfdbfe;
+            border-color: #2563eb;
+        }
+
+        .schedule-date-header .date-header-item .header-events .header-event.more {
+            background: transparent;
+            color: #2563eb;
+            font-size: 0.5rem;
+            padding: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .schedule-date-header .date-header-item .header-events .header-event.more:hover {
+            text-decoration: underline;
+        }
+
+        .schedule-date-header .date-header-item .no-header-events {
+            font-size: 0.55rem;
+            color: #94a3b8;
+            text-align: center;
+            padding: 0.2rem 0;
+        }
+
+        /* --- Schedule Container --- */
         .schedule-container {
             display: flex;
             gap: 0.3rem;
             background: #f8fafc;
-            border-radius: 24px;
+            border-radius: 0 0 24px 24px;
             padding: 0.5rem;
             min-width: 700px;
             position: relative;
@@ -1223,7 +1308,8 @@
         .schedule-day-grid::-webkit-scrollbar,
         .day-popup-box::-webkit-scrollbar,
         .modal-box::-webkit-scrollbar,
-        .overlap-selector::-webkit-scrollbar {
+        .overlap-selector::-webkit-scrollbar,
+        .schedule-date-header .date-header-item .header-events::-webkit-scrollbar {
             width: 4px;
         }
         .event-list::-webkit-scrollbar-track,
@@ -1231,7 +1317,8 @@
         .schedule-day-grid::-webkit-scrollbar-track,
         .day-popup-box::-webkit-scrollbar-track,
         .modal-box::-webkit-scrollbar-track,
-        .overlap-selector::-webkit-scrollbar-track {
+        .overlap-selector::-webkit-scrollbar-track,
+        .schedule-date-header .date-header-item .header-events::-webkit-scrollbar-track {
             background: #e2e8f0;
             border-radius: 20px;
         }
@@ -1240,7 +1327,8 @@
         .schedule-day-grid::-webkit-scrollbar-thumb,
         .day-popup-box::-webkit-scrollbar-thumb,
         .modal-box::-webkit-scrollbar-thumb,
-        .overlap-selector::-webkit-scrollbar-thumb {
+        .overlap-selector::-webkit-scrollbar-thumb,
+        .schedule-date-header .date-header-item .header-events::-webkit-scrollbar-thumb {
             background: #b9c7da;
             border-radius: 20px;
         }
@@ -1266,6 +1354,7 @@
             .schedule-event .event-time-range { font-size: 0.45rem; }
             .schedule-color-picker { gap: 0.5rem; }
             .overlap-selector { max-width: 90%; }
+            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.5rem; }
         }
 
         @media (max-width: 650px) {
@@ -1290,6 +1379,10 @@
             .schedule-event .event-name-small { font-size: 0.5rem; }
             .schedule-event .event-time-range { font-size: 0.4rem; }
             .schedule-event .overlap-badge { font-size: 0.4rem; top: -6px; right: -6px; padding: 0.05rem 0.3rem; }
+            .schedule-date-header { flex-wrap: wrap; gap: 0.15rem; }
+            .schedule-date-header .date-header-item { min-height: 35px; padding: 0.2rem 0.3rem; }
+            .schedule-date-header .date-header-item .header-events { max-height: 40px; }
+            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.45rem; }
             .date-input-wrapper { flex-wrap: wrap; }
             .date-input-wrapper input[type="datetime-local"] { min-width: 100px; }
             .clear-date-btn { min-height: 38px; padding: 0.3rem 0.6rem; }
@@ -1311,6 +1404,7 @@
             .settings-group input[type="datetime-local"] { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
             .overlap-selector { padding: 0.8rem; }
             .overlap-item .overlap-time { font-size: 0.65rem; }
+            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
         }
     </style>
 </head>
@@ -1388,6 +1482,13 @@
                 <button class="calendar-nav-btn" id="scheduleNextDay"><i class="fas fa-chevron-right"></i></button>
                 <button class="calendar-nav-btn" id="scheduleNextWeek"><i class="fas fa-chevron-double-right"></i></button>
             </div>
+            
+            <!-- Date Header Row -->
+            <div class="schedule-date-header" id="scheduleDateHeader">
+                <!-- Will be rendered by JavaScript -->
+            </div>
+            
+            <!-- Schedule Grid -->
             <div class="schedule-container" id="scheduleContainer">
                 <!-- Schedule will be rendered here -->
             </div>
@@ -1609,6 +1710,7 @@
         const scheduleViewBtn = document.getElementById('scheduleViewBtn');
         const calendarGrid = document.getElementById('calendarGrid');
         const scheduleContainer = document.getElementById('scheduleContainer');
+        const scheduleDateHeader = document.getElementById('scheduleDateHeader');
         const calendarTitle = document.getElementById('calendarTitle');
         const scheduleTitle = document.getElementById('scheduleTitle');
         const calendarPrevMonth = document.getElementById('calendarPrevMonth');
@@ -1772,7 +1874,6 @@
                 const d = new Date(event.eventDate);
                 if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
                     startTime = d;
-                    // Single event with only a date - no end time
                     isSingleEvent = true;
                     endTime = null;
                 }
@@ -2017,6 +2118,94 @@
             });
         }
 
+        // --- Render Schedule Date Header ---
+        function renderScheduleHeader() {
+            const startOfWeek = new Date(scheduleDate);
+            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+            
+            const today = new Date();
+            
+            let html = '';
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // First column is empty for time column alignment
+            html += `<div class="date-header-item" style="flex: 0 0 60px; min-width: 60px; background: transparent; border: none; min-height: auto;"></div>`;
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(date.getDate() + i);
+                const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+                const dayEvents = getEventsForDate(date);
+                
+                // Filter events that have NO time (only date, no specific time)
+                const noTimeEvents = dayEvents.filter(ev => {
+                    // Check if event has only a date (no specific time set)
+                    if (ev.eventDate) {
+                        const d = new Date(ev.eventDate);
+                        // Check if time is midnight (00:00:00) which means no time was set
+                        return d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0;
+                    }
+                    return false;
+                });
+                
+                html += `<div class="date-header-item${isToday ? ' today-header' : ''}">
+                    <div class="date-label${isToday ? ' today-label' : ''}">${dayNames[i]} ${date.getDate()}</div>
+                    <div class="header-events">`;
+                
+                if (noTimeEvents.length === 0) {
+                    html += `<div class="no-header-events">No all-day events</div>`;
+                } else {
+                    const maxShow = 3;
+                    const shownEvents = noTimeEvents.slice(0, maxShow);
+                    const remaining = noTimeEvents.length - maxShow;
+                    
+                    shownEvents.forEach(ev => {
+                        const color = ev.scheduleColor || '#dbeafe';
+                        html += `<div class="header-event" data-event-id="${ev.id}" style="background:${color}; border-color:${color};">${escapeHtml(ev.name)}</div>`;
+                    });
+                    
+                    if (remaining > 0) {
+                        html += `<div class="header-event more" data-date="${date.toISOString()}">+${remaining} more</div>`;
+                    }
+                }
+                
+                html += `</div></div>`;
+            }
+            
+            scheduleDateHeader.innerHTML = html;
+            
+            // Add click listeners for header events
+            document.querySelectorAll('.schedule-date-header .header-event[data-event-id]').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const eventId = parseInt(this.dataset.eventId);
+                    openEventSettings(eventId);
+                });
+            });
+            
+            document.querySelectorAll('.schedule-date-header .header-event.more').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const dateStr = this.dataset.date;
+                    if (dateStr) {
+                        const date = new Date(dateStr);
+                        const eventsForDay = getEventsForDate(date);
+                        // Filter to show only no-time events in the popup
+                        const noTimeEventsForDay = eventsForDay.filter(ev => {
+                            if (ev.eventDate) {
+                                const d = new Date(ev.eventDate);
+                                return d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0;
+                            }
+                            return false;
+                        });
+                        if (noTimeEventsForDay.length > 0) {
+                            showDayPopup(date, noTimeEventsForDay);
+                        }
+                    }
+                });
+            });
+        }
+
         // --- Render Schedule (Week with Timeline) ---
         function renderSchedule() {
             const startOfWeek = new Date(scheduleDate);
@@ -2047,6 +2236,15 @@
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
+                // Filter events that have a specific time (not all-day)
+                const timedEvents = dayEvents.filter(ev => {
+                    if (ev.eventDate) {
+                        const d = new Date(ev.eventDate);
+                        return !(d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0);
+                    }
+                    return true; // Range events always have time
+                });
+                
                 html += `<div class="schedule-day-column${isToday ? ' today-column' : ''}">
                     <div class="schedule-day-header${isToday ? ' today-header' : ''}">
                         ${dayNames[i]}
@@ -2060,12 +2258,12 @@
                 }
                 
                 // Add events positioned by time
-                if (dayEvents.length === 0) {
-                    html += `<div class="schedule-empty">No events</div>`;
+                if (timedEvents.length === 0) {
+                    html += `<div class="schedule-empty">No timed events</div>`;
                 } else {
                     // Group events by their start time to handle overlaps
                     const eventsByTime = {};
-                    dayEvents.forEach(ev => {
+                    timedEvents.forEach(ev => {
                         const { startTime, endTime, isSingleEvent } = getEventTimeRange(ev, date);
                         if (startTime) {
                             const key = startTime.toISOString();
@@ -2101,16 +2299,13 @@
                                 // Determine time display
                                 let timeDisplay = '';
                                 if (isSingleEvent) {
-                                    // Single date with time - show @time
                                     const timeStr = formatTimeDisplay(startTime, useStandardTime);
                                     timeDisplay = `@ ${timeStr}`;
                                 } else if (endTime) {
-                                    // Range with start and end
                                     const startTimeStr = formatTimeDisplay(startTime, useStandardTime);
                                     const endTimeStr = formatTimeDisplay(endTime, useStandardTime);
                                     timeDisplay = `${startTimeStr} → ${endTimeStr}`;
                                 } else {
-                                    // Fallback - just show start time
                                     timeDisplay = formatTimeDisplay(startTime, useStandardTime);
                                 }
                                 
@@ -2213,6 +2408,7 @@
                 calendarToggleBtn.classList.add('active');
                 renderCalendar();
                 renderSchedule();
+                renderScheduleHeader();
             } else {
                 listView.classList.remove('hidden');
                 calendarView.classList.remove('visible');
@@ -2237,6 +2433,7 @@
                 scheduleViewBtn.classList.add('active');
                 monthViewBtn.classList.remove('active');
                 renderSchedule();
+                renderScheduleHeader();
             }
         }
 
@@ -2299,7 +2496,7 @@
                         e.stopPropagation();
                         ev.status = 'hidden';
                         renderEvents();
-                        if (isCalendarView) { renderCalendar(); renderSchedule(); }
+                        if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
                     });
                 } else {
                     hideBtn.className = 'restore-btn';
@@ -2309,7 +2506,7 @@
                         e.stopPropagation();
                         ev.status = 'active';
                         renderEvents();
-                        if (isCalendarView) { renderCalendar(); renderSchedule(); }
+                        if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
                     });
                 }
 
@@ -2322,7 +2519,7 @@
                         e.stopPropagation();
                         events = events.filter(e => e.id !== ev.id);
                         renderEvents();
-                        if (isCalendarView) { renderCalendar(); renderSchedule(); }
+                        if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
                     });
                 } else {
                     deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
@@ -2331,7 +2528,7 @@
                         e.stopPropagation();
                         ev.status = 'deleted';
                         renderEvents();
-                        if (isCalendarView) { renderCalendar(); renderSchedule(); }
+                        if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
                     });
                 }
 
@@ -2470,10 +2667,10 @@
 
             document.body.style.backgroundColor = pageBg;
 
-            document.querySelectorAll('.event-list li, .calendar-day, .schedule-day-column, .schedule-time-column').forEach(el => {
+            document.querySelectorAll('.event-list li, .calendar-day, .schedule-day-column, .schedule-time-column, .schedule-date-header .date-header-item').forEach(el => {
                 el.style.backgroundColor = taskCard;
             });
-            document.querySelectorAll('.calendar-day.today, .schedule-day-column.today-column').forEach(el => {
+            document.querySelectorAll('.calendar-day.today, .schedule-day-column.today-column, .schedule-date-header .date-header-item.today-header').forEach(el => {
                 el.style.backgroundColor = '#eff6ff';
             });
 
@@ -2596,7 +2793,7 @@
 
             eventNameInput.value = '';
             renderEvents();
-            if (isCalendarView) { renderCalendar(); renderSchedule(); }
+            if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
         }
 
         // --- Save functions ---
@@ -2605,7 +2802,7 @@
             useStandardTime = standardTimeCheckbox.checked;
             updateClock();
             renderEvents();
-            if (isCalendarView) { renderCalendar(); renderSchedule(); }
+            if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
             closeGlobalSettings();
         }
 
@@ -2630,7 +2827,7 @@
                 }
             }
             renderEvents();
-            if (isCalendarView) { renderCalendar(); renderSchedule(); }
+            if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
             closeEventSettings();
         }
 
@@ -2681,6 +2878,14 @@
             workshopStart.setHours(9, 0, 0, 0);
             const workshopEnd = new Date();
             workshopEnd.setHours(11, 0, 0, 0);
+            
+            // All-day events (no time specified)
+            const allDay1 = new Date();
+            allDay1.setHours(0, 0, 0, 0);
+            const allDay2 = new Date();
+            allDay2.setHours(0, 0, 0, 0);
+            const allDay3 = new Date();
+            allDay3.setHours(0, 0, 0, 0);
 
             events = [
                 { 
@@ -2773,6 +2978,39 @@
                 },
                 { 
                     id: nextId++, 
+                    name: 'All Day Conference', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: allDay1.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#ffebee'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Holiday', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: allDay2.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#e3f2fd'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Birthday', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: allDay3.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#fff8e1'
+                },
+                { 
+                    id: nextId++, 
                     name: 'Old Task', 
                     status: 'deleted', 
                     createdAt: yesterday.toISOString(),
@@ -2861,18 +3099,22 @@
             schedulePrevDay.addEventListener('click', function() {
                 scheduleDate.setDate(scheduleDate.getDate() - 1);
                 renderSchedule();
+                renderScheduleHeader();
             });
             scheduleNextDay.addEventListener('click', function() {
                 scheduleDate.setDate(scheduleDate.getDate() + 1);
                 renderSchedule();
+                renderScheduleHeader();
             });
             schedulePrevWeek.addEventListener('click', function() {
                 scheduleDate.setDate(scheduleDate.getDate() - 7);
                 renderSchedule();
+                renderScheduleHeader();
             });
             scheduleNextWeek.addEventListener('click', function() {
                 scheduleDate.setDate(scheduleDate.getDate() + 7);
                 renderSchedule();
+                renderScheduleHeader();
             });
 
             // Day popup close
@@ -2886,12 +3128,13 @@
                 useStandardTime = this.checked;
                 updateClock();
                 renderEvents();
-                if (isCalendarView) { renderCalendar(); renderSchedule(); }
+                if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
             });
 
             // Initial calendar render
             renderCalendar();
             renderSchedule();
+            renderScheduleHeader();
             switchView('month');
         }
 
