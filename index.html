@@ -486,7 +486,7 @@
         .schedule-date-header {
             display: flex;
             gap: 0.3rem;
-            margin-bottom: 0;
+            margin-bottom: 0.3rem;
             background: #f8fafc;
             border-radius: 24px 24px 0 0;
             padding: 0.5rem 0.5rem 0.3rem;
@@ -523,7 +523,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.1rem;
-            max-height: 60px;
+            max-height: 80px;
             overflow-y: auto;
         }
 
@@ -1395,7 +1395,7 @@
             .schedule-event .overlap-badge { font-size: 0.4rem; top: -6px; right: -6px; padding: 0.05rem 0.3rem; }
             .schedule-date-header { flex-wrap: wrap; gap: 0.15rem; }
             .schedule-date-header .date-header-item { min-height: 35px; padding: 0.2rem 0.3rem; }
-            .schedule-date-header .date-header-item .header-events { max-height: 40px; }
+            .schedule-date-header .date-header-item .header-events { max-height: 50px; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.45rem; }
             .date-input-wrapper { flex-wrap: wrap; }
             .date-input-wrapper input[type="datetime-local"] { min-width: 100px; }
@@ -2163,29 +2163,24 @@
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
-                // Filter events that have NO time (only date, midnight 00:00:00)
-                const noTimeEvents = dayEvents.filter(ev => {
-                    if (ev.eventDate) {
-                        const d = new Date(ev.eventDate);
-                        return d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0;
-                    }
-                    return false;
-                });
+                // Show ALL events in header (both all-day and timed) - same as calendar view
+                const allEvents = dayEvents;
                 
                 html += `<div class="date-header-item${isToday ? ' today-header' : ''}">
                     <div class="date-label${isToday ? ' today-label' : ''}">${dayNames[i]} ${date.getDate()}</div>
                     <div class="header-events">`;
                 
-                if (noTimeEvents.length === 0) {
-                    html += `<div class="no-header-events">No all-day events</div>`;
+                if (allEvents.length === 0) {
+                    html += `<div class="no-header-events">No events</div>`;
                 } else {
                     const maxShow = 3;
-                    const shownEvents = noTimeEvents.slice(0, maxShow);
-                    const remaining = noTimeEvents.length - maxShow;
+                    const shownEvents = allEvents.slice(0, maxShow);
+                    const remaining = allEvents.length - maxShow;
                     
                     shownEvents.forEach(ev => {
                         const color = ev.scheduleColor || '#dbeafe';
-                        html += `<div class="header-event" data-event-id="${ev.id}" style="background:${color}; border-color:${color};">${escapeHtml(ev.name)}</div>`;
+                        const displayText = getDisplayDate(ev);
+                        html += `<div class="header-event" data-event-id="${ev.id}" style="background:${color}; border-color:${color};" title="${escapeHtml(ev.name)}">${escapeHtml(ev.name)}</div>`;
                     });
                     
                     if (remaining > 0) {
@@ -2214,17 +2209,7 @@
                     if (dateStr) {
                         const date = new Date(dateStr);
                         const eventsForDay = getEventsForDate(date);
-                        // Filter to show only no-time events in the popup
-                        const noTimeEventsForDay = eventsForDay.filter(ev => {
-                            if (ev.eventDate) {
-                                const d = new Date(ev.eventDate);
-                                return d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0;
-                            }
-                            return false;
-                        });
-                        if (noTimeEventsForDay.length > 0) {
-                            showDayPopup(date, noTimeEventsForDay);
-                        }
+                        showDayPopup(date, eventsForDay);
                     }
                 });
             });
@@ -2260,7 +2245,7 @@
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
-                // Filter events that have a specific time (not all-day)
+                // Filter events that have a specific time (not midnight) for the grid
                 const timedEvents = dayEvents.filter(ev => {
                     if (ev.eventDate) {
                         const d = new Date(ev.eventDate);
@@ -2282,7 +2267,7 @@
                     html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
                 }
                 
-                // Add events positioned by time
+                // Add events positioned by time (only timed events, not all-day)
                 if (timedEvents.length === 0) {
                     html += `<div class="schedule-empty">No timed events</div>`;
                 } else {
