@@ -572,16 +572,15 @@
             background: #dbeafe;
             border: 1px solid #93c5fd;
             border-radius: 6px;
-            padding: 0.15rem 0.3rem;
-            font-size: 0.6rem;
-            color: #1e40af;
+            padding: 0.2rem 0.3rem;
             cursor: pointer;
             transition: 0.1s;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
             z-index: 10;
-            min-height: 18px;
+            min-height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .schedule-event:hover {
@@ -590,15 +589,28 @@
             z-index: 20;
         }
 
-        .schedule-event .event-time {
-            font-size: 0.5rem;
-            opacity: 0.7;
-            display: block;
+        .schedule-event .event-name-small {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #1e40af;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .schedule-event .event-name-small {
-            font-weight: 500;
-            display: block;
+        .schedule-event .event-time-range {
+            font-size: 0.5rem;
+            color: #3b82f6;
+            opacity: 0.8;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .schedule-event .event-time-range .time-separator {
+            margin: 0 0.1rem;
         }
 
         .schedule-empty {
@@ -606,6 +618,11 @@
             color: #94a3b8;
             font-size: 0.7rem;
             padding: 1rem 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
         }
 
         /* --- Day Events Popup --- */
@@ -926,7 +943,9 @@
             .schedule-time-slot { height: 40px; font-size: 0.6rem; }
             .schedule-day-grid { min-height: 480px; }
             .schedule-hour-slot { height: 40px; }
-            .schedule-event { font-size: 0.5rem; min-height: 14px; }
+            .schedule-event { min-height: 16px; padding: 0.1rem 0.2rem; }
+            .schedule-event .event-name-small { font-size: 0.5rem; }
+            .schedule-event .event-time-range { font-size: 0.4rem; }
             .date-input-wrapper { flex-direction: column; align-items: stretch; }
             .clear-date-btn { justify-content: center; }
             .view-toggle-area { flex-wrap: wrap; }
@@ -1334,6 +1353,61 @@
             });
         }
 
+        // --- Get event time range for display ---
+        function getEventTimeRange(event, date) {
+            let startTime = null;
+            let endTime = null;
+            
+            if (event.eventDate) {
+                const d = new Date(event.eventDate);
+                if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
+                    startTime = d;
+                    endTime = new Date(d);
+                    endTime.setHours(endTime.getHours() + 1);
+                }
+            } else if (event.startDate && event.endDate) {
+                const start = new Date(event.startDate);
+                const end = new Date(event.endDate);
+                const checkDate = new Date(date);
+                checkDate.setHours(0,0,0,0);
+                const startDate = new Date(start);
+                startDate.setHours(0,0,0,0);
+                const endDate = new Date(end);
+                endDate.setHours(0,0,0,0);
+                
+                if (checkDate >= startDate && checkDate <= endDate) {
+                    if (checkDate.getTime() === startDate.getTime()) {
+                        startTime = start;
+                    } else {
+                        startTime = new Date(date);
+                        startTime.setHours(0, 0, 0, 0);
+                    }
+                    if (checkDate.getTime() === endDate.getTime()) {
+                        endTime = end;
+                    } else {
+                        endTime = new Date(date);
+                        endTime.setHours(23, 59, 59, 999);
+                    }
+                }
+            }
+            
+            return { startTime, endTime };
+        }
+
+        // --- Format time for display ---
+        function formatTimeDisplay(date, useStandard = false) {
+            if (!date) return '';
+            let hours = date.getHours();
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            
+            if (useStandard) {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                return `${hours}:${minutes} ${ampm}`;
+            }
+            return `${String(hours).padStart(2, '0')}:${minutes}`;
+        }
+
         // --- Show Day Popup ---
         function showDayPopup(date, eventsForDay) {
             const dateStr = date.toLocaleDateString('en-US', { 
@@ -1515,65 +1589,37 @@
                 }
                 
                 // Add events positioned by time
-                dayEvents.forEach(ev => {
-                    let startTime = null;
-                    let endTime = null;
-                    let eventDate = null;
-                    
-                    // Determine the event time
-                    if (ev.eventDate) {
-                        const d = new Date(ev.eventDate);
-                        if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
-                            startTime = d.getHours() + d.getMinutes() / 60;
-                            endTime = startTime + 1; // Default 1 hour duration
-                            eventDate = d;
-                        }
-                    } else if (ev.startDate && ev.endDate) {
-                        const start = new Date(ev.startDate);
-                        const end = new Date(ev.endDate);
-                        const checkDate = new Date(date);
-                        checkDate.setHours(0,0,0,0);
-                        const startDate = new Date(start);
-                        startDate.setHours(0,0,0,0);
-                        const endDate = new Date(end);
-                        endDate.setHours(0,0,0,0);
-                        
-                        if (checkDate >= startDate && checkDate <= endDate) {
-                            // If it's a multi-day event, show it across the range
-                            const startHour = start.getHours() + start.getMinutes() / 60;
-                            const endHour = end.getHours() + end.getMinutes() / 60;
-                            if (checkDate.getTime() === startDate.getTime()) {
-                                startTime = startHour;
-                            } else {
-                                startTime = 0;
-                            }
-                            if (checkDate.getTime() === endDate.getTime()) {
-                                endTime = endHour;
-                            } else {
-                                endTime = 24;
-                            }
-                            eventDate = date;
-                        }
-                    }
-                    
-                    if (startTime !== null && endTime !== null && eventDate) {
-                        // Calculate position and height
-                        const topPercent = (startTime / 24) * 100;
-                        const heightPercent = ((endTime - startTime) / 24) * 100;
-                        const timeStr = formatDate(eventDate.toISOString(), false, useStandardTime);
-                        
-                        html += `<div class="schedule-event" 
-                                  data-event-id="${ev.id}"
-                                  style="top: ${topPercent}%; height: ${Math.max(heightPercent, 3)}%;">
-                            <span class="event-name-small">${escapeHtml(ev.name)}</span>
-                            <span class="event-time">${timeStr}</span>
-                        </div>`;
-                    }
-                });
-                
-                // Add empty message if no events
                 if (dayEvents.length === 0) {
                     html += `<div class="schedule-empty">No events</div>`;
+                } else {
+                    dayEvents.forEach(ev => {
+                        const { startTime, endTime } = getEventTimeRange(ev, date);
+                        
+                        if (startTime && endTime) {
+                            const startHour = startTime.getHours() + startTime.getMinutes() / 60;
+                            const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+                            const duration = endHour - startHour;
+                            
+                            if (duration > 0) {
+                                const topPercent = (startHour / 24) * 100;
+                                const heightPercent = (duration / 24) * 100;
+                                
+                                const startTimeStr = formatTimeDisplay(startTime, useStandardTime);
+                                const endTimeStr = formatTimeDisplay(endTime, useStandardTime);
+                                
+                                html += `<div class="schedule-event" 
+                                          data-event-id="${ev.id}"
+                                          style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%;">
+                                    <span class="event-name-small">${escapeHtml(ev.name)}</span>
+                                    <span class="event-time-range">
+                                        <span class="event-start">${startTimeStr}</span>
+                                        <span class="time-separator">→</span>
+                                        <span class="event-end">${endTimeStr}</span>
+                                    </span>
+                                </div>`;
+                            }
+                        }
+                    });
                 }
                 
                 html += `</div></div>`;
