@@ -1097,7 +1097,8 @@
         }
 
         /* --- Fixed Date/Time Inputs with AM/PM --- */
-        .settings-group input[type="datetime-local"] {
+        .settings-group input[type="datetime-local"],
+        .settings-group input[type="date"] {
             width: 100%;
             padding: 0.6rem 1rem;
             border-radius: 30px;
@@ -1110,7 +1111,8 @@
             min-width: 200px;
         }
 
-        .settings-group input[type="datetime-local"]:focus {
+        .settings-group input[type="datetime-local"]:focus,
+        .settings-group input[type="date"]:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 3px #2563eb30;
         }
@@ -1194,7 +1196,8 @@
             width: 100%;
         }
 
-        .date-input-wrapper input[type="datetime-local"] {
+        .date-input-wrapper input[type="datetime-local"],
+        .date-input-wrapper input[type="date"] {
             flex: 1;
             min-width: 180px;
             width: 100%;
@@ -1249,7 +1252,7 @@
             flex-wrap: nowrap;
         }
 
-        /* AM/PM Toggle Hint */
+        /* AM/PM Toggle Hint - only show when hide time is false */
         .ampm-hint {
             font-size: 0.7rem;
             color: #64748b;
@@ -1373,7 +1376,8 @@
             .date-range-item {
                 min-width: 100%;
             }
-            .date-input-wrapper input[type="datetime-local"] {
+            .date-input-wrapper input[type="datetime-local"],
+            .date-input-wrapper input[type="date"] {
                 min-width: 120px;
             }
             .clear-date-btn {
@@ -1417,12 +1421,14 @@
             .schedule-date-header .date-header-item .header-events { max-height: 50px; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.45rem; }
             .date-input-wrapper { flex-wrap: wrap; }
-            .date-input-wrapper input[type="datetime-local"] { min-width: 100px; }
+            .date-input-wrapper input[type="datetime-local"],
+            .date-input-wrapper input[type="date"] { min-width: 100px; }
             .clear-date-btn { min-height: 38px; padding: 0.3rem 0.6rem; }
             .date-range-wrapper { flex-direction: column; }
             .date-range-item { min-width: 100%; }
             .view-toggle-area { flex-wrap: wrap; }
-            .settings-group input[type="datetime-local"] { min-width: 100px; font-size: 0.85rem; }
+            .settings-group input[type="datetime-local"],
+            .settings-group input[type="date"] { min-width: 100px; font-size: 0.85rem; }
             .schedule-color-picker { flex-direction: column; align-items: stretch; }
             .schedule-color-picker .color-preview { width: 100%; height: 40px; }
             .overlap-selector { max-width: 95%; padding: 1rem; }
@@ -1433,10 +1439,12 @@
 
         @media (max-width: 400px) {
             .date-input-wrapper { flex-direction: column; align-items: stretch; }
-            .date-input-wrapper input[type="datetime-local"] { min-width: 100%; }
+            .date-input-wrapper input[type="datetime-local"],
+            .date-input-wrapper input[type="date"] { min-width: 100%; }
             .clear-date-btn { justify-content: center; min-width: 100%; }
             .modal-box { padding: 1rem; }
-            .settings-group input[type="datetime-local"] { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+            .settings-group input[type="datetime-local"],
+            .settings-group input[type="date"] { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
             .overlap-selector { padding: 0.8rem; }
             .overlap-item .overlap-time { font-size: 0.65rem; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
@@ -1651,7 +1659,7 @@
                 <input type="datetime-local" id="eventDateSingle">
                 <button class="clear-date-btn" id="clearEventDate"><i class="fas fa-times-circle"></i> Clear</button>
             </div>
-            <div class="ampm-hint">
+            <div class="ampm-hint" id="eventDateHint">
                 <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
             </div>
             <div class="settings-note">Set a single date and time for this event. Use 00:00 for midnight.</div>
@@ -1666,7 +1674,7 @@
                         <input type="datetime-local" id="eventStartDate">
                         <button class="clear-date-btn" id="clearStartDate"><i class="fas fa-times-circle"></i> Clear</button>
                     </div>
-                    <div class="ampm-hint">
+                    <div class="ampm-hint" id="startDateHint">
                         <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
                     </div>
                 </div>
@@ -1676,7 +1684,7 @@
                         <input type="datetime-local" id="eventEndDate">
                         <button class="clear-date-btn" id="clearEndDate"><i class="fas fa-times-circle"></i> Clear</button>
                     </div>
-                    <div class="ampm-hint">
+                    <div class="ampm-hint" id="endDateHint">
                         <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
                     </div>
                 </div>
@@ -1707,7 +1715,7 @@
                 <input type="checkbox" id="hideTimeCheckbox">
                 <span>Show dates without time (date only)</span>
             </div>
-            <div class="settings-note">When enabled, removes time from all date displays for this event.</div>
+            <div class="settings-note">When enabled, removes time from all date displays for this event and switches inputs to date-only.</div>
         </div>
 
         <div class="settings-group">
@@ -1808,6 +1816,11 @@
         const scheduleColorHex = document.getElementById('scheduleColorHex');
         const scheduleColorPreview = document.getElementById('scheduleColorPreview');
         const resetScheduleColor = document.getElementById('resetScheduleColor');
+        
+        // Hint elements
+        const eventDateHint = document.getElementById('eventDateHint');
+        const startDateHint = document.getElementById('startDateHint');
+        const endDateHint = document.getElementById('endDateHint');
 
         // Clear buttons
         const clearEventDate = document.getElementById('clearEventDate');
@@ -2604,11 +2617,13 @@
             eventModalTitle.textContent = `"${ev.name}"`;
             
             eventNameEdit.value = ev.name;
-            eventDateSingle.value = ev.eventDate || '';
-            eventStartDate.value = ev.startDate || '';
-            eventEndDate.value = ev.endDate || '';
+            
+            // Set date values based on hideTime
+            const hideTime = ev.hideTime || false;
+            updateDateInputs(hideTime, ev);
+            
             eventCreatedAt.value = ev.createdAt || 'Unknown';
-            hideTimeCheckbox.checked = ev.hideTime || false;
+            hideTimeCheckbox.checked = hideTime;
             eventNotes.value = ev.notes || '';
             
             const color = ev.scheduleColor || '#dbeafe';
@@ -2617,6 +2632,45 @@
             scheduleColorPreview.style.background = color;
 
             eventModal.classList.add('open');
+        }
+
+        // --- Update date inputs based on hideTime ---
+        function updateDateInputs(hideTime, ev) {
+            const dateValue = ev.eventDate || '';
+            const startValue = ev.startDate || '';
+            const endValue = ev.endDate || '';
+            
+            if (hideTime) {
+                // Convert to date-only inputs
+                eventDateSingle.type = 'date';
+                eventStartDate.type = 'date';
+                eventEndDate.type = 'date';
+                
+                // Set values (remove time part)
+                eventDateSingle.value = dateValue ? dateValue.split('T')[0] : '';
+                eventStartDate.value = startValue ? startValue.split('T')[0] : '';
+                eventEndDate.value = endValue ? endValue.split('T')[0] : '';
+                
+                // Hide AM/PM hints
+                eventDateHint.style.display = 'none';
+                startDateHint.style.display = 'none';
+                endDateHint.style.display = 'none';
+            } else {
+                // Convert back to datetime-local
+                eventDateSingle.type = 'datetime-local';
+                eventStartDate.type = 'datetime-local';
+                eventEndDate.type = 'datetime-local';
+                
+                // Set values (preserve time if available)
+                eventDateSingle.value = dateValue || '';
+                eventStartDate.value = startValue || '';
+                eventEndDate.value = endValue || '';
+                
+                // Show AM/PM hints
+                eventDateHint.style.display = 'flex';
+                startDateHint.style.display = 'flex';
+                endDateHint.style.display = 'flex';
+            }
         }
 
         function closeEventSettings() {
@@ -2769,6 +2823,9 @@
             
             dateInputs.forEach(input => {
                 input.addEventListener('keydown', function(e) {
+                    // Only apply shortcuts if input is datetime-local (not date-only)
+                    if (this.type !== 'datetime-local') return;
+                    
                     if (e.key === 'a' || e.key === 'A') {
                         e.preventDefault();
                         if (this.value) {
@@ -2856,10 +2913,22 @@
                     const newName = eventNameEdit.value.trim();
                     if (newName) ev.name = newName;
                     
-                    ev.eventDate = eventDateSingle.value || null;
-                    ev.startDate = eventStartDate.value || null;
-                    ev.endDate = eventEndDate.value || null;
-                    ev.hideTime = hideTimeCheckbox.checked;
+                    // Get values based on input type
+                    const hideTime = hideTimeCheckbox.checked;
+                    ev.hideTime = hideTime;
+                    
+                    if (hideTime) {
+                        // Date-only inputs - add time part
+                        ev.eventDate = eventDateSingle.value ? `${eventDateSingle.value}T00:00:00` : null;
+                        ev.startDate = eventStartDate.value ? `${eventStartDate.value}T00:00:00` : null;
+                        ev.endDate = eventEndDate.value ? `${eventEndDate.value}T00:00:00` : null;
+                    } else {
+                        // Datetime inputs - preserve time
+                        ev.eventDate = eventDateSingle.value || null;
+                        ev.startDate = eventStartDate.value || null;
+                        ev.endDate = eventEndDate.value || null;
+                    }
+                    
                     ev.notes = eventNotes.value || '';
                     
                     const color = scheduleColorPicker.value;
@@ -2874,6 +2943,76 @@
             if (isCalendarView) { renderCalendar(); renderSchedule(); renderScheduleHeader(); }
             closeEventSettings();
         }
+
+        // --- Hide time checkbox handler ---
+        hideTimeCheckbox.addEventListener('change', function() {
+            const hideTime = this.checked;
+            if (currentEditingEventId !== null) {
+                const ev = events.find(e => e.id === currentEditingEventId);
+                if (ev) {
+                    // Store current values before switching
+                    const currentEventDate = eventDateSingle.value;
+                    const currentStartDate = eventStartDate.value;
+                    const currentEndDate = eventEndDate.value;
+                    
+                    updateDateInputs(hideTime, ev);
+                    
+                    // If switching to hide time, strip time from values
+                    if (hideTime) {
+                        if (currentEventDate) {
+                            eventDateSingle.value = currentEventDate.split('T')[0];
+                        }
+                        if (currentStartDate) {
+                            eventStartDate.value = currentStartDate.split('T')[0];
+                        }
+                        if (currentEndDate) {
+                            eventEndDate.value = currentEndDate.split('T')[0];
+                        }
+                    } else {
+                        // If switching to show time, try to preserve values
+                        if (currentEventDate) {
+                            // Check if it's a date-only value (no time)
+                            if (!currentEventDate.includes('T')) {
+                                // Try to find original value with time
+                                const originalEv = events.find(e => e.id === currentEditingEventId);
+                                if (originalEv && originalEv.eventDate) {
+                                    eventDateSingle.value = originalEv.eventDate;
+                                } else {
+                                    // If no original, set to current date with 00:00
+                                    eventDateSingle.value = `${currentEventDate}T00:00:00`;
+                                }
+                            } else {
+                                eventDateSingle.value = currentEventDate;
+                            }
+                        }
+                        if (currentStartDate) {
+                            if (!currentStartDate.includes('T')) {
+                                const originalEv = events.find(e => e.id === currentEditingEventId);
+                                if (originalEv && originalEv.startDate) {
+                                    eventStartDate.value = originalEv.startDate;
+                                } else {
+                                    eventStartDate.value = `${currentStartDate}T00:00:00`;
+                                }
+                            } else {
+                                eventStartDate.value = currentStartDate;
+                            }
+                        }
+                        if (currentEndDate) {
+                            if (!currentEndDate.includes('T')) {
+                                const originalEv = events.find(e => e.id === currentEditingEventId);
+                                if (originalEv && originalEv.endDate) {
+                                    eventEndDate.value = originalEv.endDate;
+                                } else {
+                                    eventEndDate.value = `${currentEndDate}T00:00:00`;
+                                }
+                            } else {
+                                eventEndDate.value = currentEndDate;
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         // --- Escape ---
         function escapeHtml(text) {
@@ -2940,6 +3079,10 @@
             // 12:30 AM event
             const halfPastMidnight = new Date();
             halfPastMidnight.setHours(0, 30, 0, 0);
+
+            // Date-only event (hide time)
+            const dateOnlyEvent = new Date();
+            dateOnlyEvent.setHours(0, 0, 0, 0);
 
             events = [
                 { 
@@ -3011,7 +3154,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: true,
-                    notes: 'Review designs',
+                    notes: 'Review designs - date only',
                     scheduleColor: '#f3e5f5'
                 },
                 { 
@@ -3109,6 +3252,18 @@
                     hideTime: false,
                     notes: 'Late night coding session',
                     scheduleColor: '#fed7aa'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Date Only Event', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: dateOnlyEvent.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: true,
+                    notes: 'This event has no time - date only',
+                    scheduleColor: '#e0e7ff'
                 },
                 { 
                     id: nextId++, 
