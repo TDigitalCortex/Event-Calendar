@@ -486,7 +486,7 @@
         .schedule-date-header {
             display: flex;
             gap: 0.3rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             background: #f8fafc;
             border-radius: 24px 24px 0 0;
             padding: 0.5rem 0.5rem 0.3rem;
@@ -575,6 +575,7 @@
             padding: 0.5rem;
             min-width: 700px;
             position: relative;
+            padding-top: 0.8rem;
         }
 
         .schedule-time-column {
@@ -587,6 +588,13 @@
             position: sticky;
             left: 0;
             z-index: 30;
+            margin-top: -0.3rem;
+        }
+
+        /* Spacer for the time column to align with the date header */
+        .schedule-time-spacer {
+            height: 0.8rem;
+            background: transparent;
         }
 
         .schedule-time-slot {
@@ -612,6 +620,7 @@
             border: 1px solid #e9edf2;
             min-width: 80px;
             position: relative;
+            margin-top: -0.3rem;
         }
 
         .schedule-day-column.today-column {
@@ -1394,6 +1403,7 @@
             .schedule-color-picker .color-preview { width: 100%; height: 40px; }
             .overlap-selector { max-width: 95%; padding: 1rem; }
             .overlap-item { padding: 0.4rem 0.6rem; }
+            .schedule-time-column { flex: 0 0 35px; min-width: 35px; }
         }
 
         @media (max-width: 400px) {
@@ -1405,6 +1415,8 @@
             .overlap-selector { padding: 0.8rem; }
             .overlap-item .overlap-time { font-size: 0.65rem; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
+            .schedule-time-column { flex: 0 0 30px; min-width: 30px; }
+            .schedule-time-slot { font-size: 0.5rem; height: 30px; }
         }
     </style>
 </head>
@@ -1874,8 +1886,15 @@
                 const d = new Date(event.eventDate);
                 if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
                     startTime = d;
-                    isSingleEvent = true;
-                    endTime = null;
+                    // Check if the event has a specific time (not midnight)
+                    const hasTime = !(d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0);
+                    if (hasTime) {
+                        isSingleEvent = true;
+                        endTime = null;
+                    } else {
+                        // This is an all-day event - don't show in the grid
+                        return { startTime: null, endTime: null, isSingleEvent: true };
+                    }
                 }
             } else if (event.startDate && event.endDate) {
                 const start = new Date(event.startDate);
@@ -2137,12 +2156,10 @@
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
-                // Filter events that have NO time (only date, no specific time)
+                // Filter events that have NO time (only date, midnight 00:00:00)
                 const noTimeEvents = dayEvents.filter(ev => {
-                    // Check if event has only a date (no specific time set)
                     if (ev.eventDate) {
                         const d = new Date(ev.eventDate);
-                        // Check if time is midnight (00:00:00) which means no time was set
                         return d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0;
                     }
                     return false;
@@ -2218,9 +2235,11 @@
             // Build schedule HTML
             let html = '';
             
-            // Time column
+            // Time column - with spacer at top for alignment
             html += `<div class="schedule-time-column">`;
-            for (let hour = 0; hour < 24; hour++) {
+            // Add a spacer div at the top to align with the date header
+            html += `<div class="schedule-time-spacer"></div>`;
+            for (let hour = 1; hour < 24; hour++) {
                 const timeLabel = useStandardTime ? 
                     `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}` :
                     `${String(hour).padStart(2, '0')}:00`;
@@ -2252,8 +2271,8 @@
                     </div>
                     <div class="schedule-day-grid" data-date="${date.toISOString()}">`;
                 
-                // Add hour slots
-                for (let hour = 0; hour < 24; hour++) {
+                // Add hour slots - starting from 1:00 to align with time column
+                for (let hour = 1; hour < 24; hour++) {
                     html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
                 }
                 
@@ -2288,7 +2307,7 @@
                         const duration = endHour - startHour;
                         
                         if (duration > 0) {
-                            const topPercent = (startHour / 24) * 100;
+                            const topPercent = ((startHour) / 24) * 100;
                             const heightPercent = (duration / 24) * 100;
                             
                             if (totalInGroup === 1) {
@@ -2879,13 +2898,15 @@
             const workshopEnd = new Date();
             workshopEnd.setHours(11, 0, 0, 0);
             
-            // All-day events (no time specified)
+            // All-day events (no time specified - midnight)
             const allDay1 = new Date();
             allDay1.setHours(0, 0, 0, 0);
             const allDay2 = new Date();
             allDay2.setHours(0, 0, 0, 0);
             const allDay3 = new Date();
             allDay3.setHours(0, 0, 0, 0);
+            const allDay4 = new Date();
+            allDay4.setHours(0, 0, 0, 0);
 
             events = [
                 { 
@@ -3008,6 +3029,17 @@
                     endDate: null,
                     hideTime: false,
                     scheduleColor: '#fff8e1'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Company Event', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: allDay4.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#e8f5e9'
                 },
                 { 
                     id: nextId++, 
