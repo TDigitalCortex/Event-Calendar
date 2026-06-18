@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Clock · Dual Settings</title>
+    <title>Event Planner</title>
     <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -444,6 +444,39 @@
 
         .save-settings-btn:hover { background: #1d4ed8; transform: scale(1.01); }
 
+        /* --- Clear button for date fields --- */
+        .date-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-input-wrapper input[type="datetime-local"] {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .clear-date-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+        }
+
+        .clear-date-btn:hover {
+            background: #fecaca;
+            transform: scale(1.02);
+        }
+
         /* --- Footer --- */
         .footer-credit {
             margin-top: 1.8rem;
@@ -469,6 +502,8 @@
             .tabs-container { flex-wrap: wrap; }
             .modal-box { padding: 1.5rem; }
             .settings-area { flex-direction: column; align-items: stretch; }
+            .date-input-wrapper { flex-direction: column; align-items: stretch; }
+            .clear-date-btn { justify-content: center; }
         }
     </style>
 </head>
@@ -489,9 +524,6 @@
     <div class="settings-area">
         <button class="settings-btn primary" id="globalSettingsBtn">
             <i class="fas fa-palette"></i> Global Styles
-        </button>
-        <button class="settings-btn" id="eventSettingsBtn" style="display:none;">
-            <i class="fas fa-calendar-edit"></i> Event Settings
         </button>
     </div>
 
@@ -602,7 +634,10 @@
 
         <div class="settings-group">
             <label>Event Date (Single)</label>
-            <input type="datetime-local" id="eventDateSingle">
+            <div class="date-input-wrapper">
+                <input type="datetime-local" id="eventDateSingle">
+                <button class="clear-date-btn" id="clearEventDate"><i class="fas fa-times-circle"></i> Clear</button>
+            </div>
             <div class="settings-note">Set a single date for this event.</div>
         </div>
 
@@ -611,11 +646,17 @@
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                 <div style="flex:1; min-width:140px;">
                     <label style="font-weight:400; font-size:0.8rem; color:#64748b;">Start Date</label>
-                    <input type="datetime-local" id="eventStartDate">
+                    <div class="date-input-wrapper">
+                        <input type="datetime-local" id="eventStartDate">
+                        <button class="clear-date-btn" id="clearStartDate"><i class="fas fa-times-circle"></i> Clear</button>
+                    </div>
                 </div>
                 <div style="flex:1; min-width:140px;">
                     <label style="font-weight:400; font-size:0.8rem; color:#64748b;">End Date</label>
-                    <input type="datetime-local" id="eventEndDate">
+                    <div class="date-input-wrapper">
+                        <input type="datetime-local" id="eventEndDate">
+                        <button class="clear-date-btn" id="clearEndDate"><i class="fas fa-times-circle"></i> Clear</button>
+                    </div>
                 </div>
             </div>
             <div class="settings-note">If both Start and End dates are set, they override the single Event Date.</div>
@@ -689,6 +730,11 @@
         const eventCreatedAt = document.getElementById('eventCreatedAt');
         const hideTimeCheckbox = document.getElementById('hideTimeCheckbox');
 
+        // Clear buttons
+        const clearEventDate = document.getElementById('clearEventDate');
+        const clearStartDate = document.getElementById('clearStartDate');
+        const clearEndDate = document.getElementById('clearEndDate');
+
         // --- State ---
         let events = [];
         let nextId = 1;
@@ -751,7 +797,7 @@
             if (event.eventDate) {
                 return formatDate(event.eventDate, event.hideTime || false, useStandardTime);
             }
-            return formatDate(event.createdAt, false, useStandardTime);
+            return 'No date set';
         }
 
         // --- Render events ---
@@ -887,6 +933,11 @@
         function closeEventSettings() {
             eventModal.classList.remove('open');
             currentEditingEventId = null;
+        }
+
+        // --- Clear date functions ---
+        function clearDateField(inputField) {
+            inputField.value = '';
         }
 
         // --- Load styles into modal ---
@@ -1136,14 +1187,22 @@
             saveGlobalSettings.addEventListener('click', saveGlobal);
 
             // Event settings
-            // The event settings button is hidden - events are opened via the cog icon on each event
-
-            // Event modal close
             eventModalClose.addEventListener('click', closeEventSettings);
             eventModal.addEventListener('click', function(e) {
                 if (e.target === this) closeEventSettings();
             });
             saveEventSettings.addEventListener('click', saveEvent);
+
+            // Clear date buttons
+            clearEventDate.addEventListener('click', function() {
+                clearDateField(eventDateSingle);
+            });
+            clearStartDate.addEventListener('click', function() {
+                clearDateField(eventStartDate);
+            });
+            clearEndDate.addEventListener('click', function() {
+                clearDateField(eventEndDate);
+            });
 
             // Standard time checkbox
             standardTimeCheckbox.addEventListener('change', function() {
