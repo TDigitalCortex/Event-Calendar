@@ -716,7 +716,7 @@
             border-color: #2563eb;
         }
 
-        /* Overlapping events - show with slight offset */
+        /* Overlapping events - show with badge */
         .schedule-event.overlap {
             border-style: solid;
             border-width: 2px;
@@ -726,6 +726,30 @@
         .schedule-event.overlap:hover {
             opacity: 1;
             z-index: 100 !important;
+        }
+
+        /* Overlap indicator badge */
+        .schedule-event .overlap-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.05rem 0.4rem;
+            border-radius: 10px;
+            font-weight: 700;
+            line-height: 1.4;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 20;
+            border: 1px solid white;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .schedule-event .overlap-badge:hover {
+            transform: scale(1.15);
+            background: #dc2626;
         }
 
         /* Highlight on hover */
@@ -1365,6 +1389,13 @@
                 font-size: 0.35rem;
             }
             
+            .schedule-event .overlap-badge {
+                font-size: 0.4rem;
+                top: -6px;
+                right: -6px;
+                padding: 0.05rem 0.3rem;
+            }
+            
             .schedule-date-header .date-header-item {
                 min-height: 35px;
                 padding: 0.15rem 0.2rem;
@@ -1524,6 +1555,13 @@
             
             .schedule-event .event-time-range {
                 font-size: 0.3rem;
+            }
+            
+            .schedule-event .overlap-badge {
+                font-size: 0.35rem;
+                top: -5px;
+                right: -5px;
+                padding: 0.05rem 0.2rem;
             }
             
             .schedule-date-header .date-header-item {
@@ -2420,14 +2458,6 @@
                             const topPercent = (startHour / 24) * 100;
                             const heightPercent = (duration / 24) * 100;
                             
-                            // Calculate offset for overlapping events
-                            let offset = 0;
-                            if (totalInGroup > 1) {
-                                // Stack overlapping events with slight vertical offset
-                                const groupIndex = group.findIndex(item => item.event.id === firstItem.event.id);
-                                offset = (groupIndex / totalInGroup) * 4;
-                            }
-                            
                             if (totalInGroup === 1) {
                                 // Single event - show normally
                                 const ev = group[0].event;
@@ -2448,13 +2478,19 @@
                                 
                                 html += `<div class="schedule-event" 
                                           data-event-id="${ev.id}"
-                                          style="top: ${topPercent + offset}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
+                                          style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
                                           title="${escapeHtml(ev.name)}">
                                     <span class="event-name-small">${escapeHtml(ev.name)}</span>
                                     <span class="event-time-range">${timeDisplay}</span>
                                 </div>`;
                             } else {
-                                // Multiple events - show each with offset
+                                // Multiple events - show first one with badge
+                                const firstEv = group[0].event;
+                                const color = firstEv.scheduleColor || defaultColors[firstEv.id % defaultColors.length] || '#dbeafe';
+                                
+                                // Collect all event IDs in this group
+                                const eventIds = group.map(item => item.event.id);
+                                
                                 // Determine time display for the group
                                 let timeDisplay = '';
                                 if (isSingleEvent) {
@@ -2468,20 +2504,15 @@
                                     timeDisplay = formatTimeDisplay(startTime, useStandardTime);
                                 }
                                 
-                                // Show each event with different colors
-                                group.forEach((item, index) => {
-                                    const ev = item.event;
-                                    const evColor = ev.scheduleColor || defaultColors[ev.id % defaultColors.length] || '#dbeafe';
-                                    const offsetAmount = (index / totalInGroup) * 4;
-                                    
-                                    html += `<div class="schedule-event overlap" 
-                                              data-event-id="${ev.id}"
-                                              style="top: ${topPercent + offsetAmount}%; height: ${Math.max(heightPercent / totalInGroup, 2)}%; background: ${evColor}; border-color: ${evColor};"
-                                              title="${escapeHtml(ev.name)}">
-                                        <span class="event-name-small">${escapeHtml(ev.name)}</span>
-                                        <span class="event-time-range">${timeDisplay}</span>
-                                    </div>`;
-                                });
+                                html += `<div class="schedule-event overlap" 
+                                          data-event-id="${firstEv.id}"
+                                          data-overlap-ids='${JSON.stringify(eventIds)}'
+                                          style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
+                                          title="${escapeHtml(firstEv.name)} + ${totalInGroup - 1} more">
+                                    <span class="event-name-small">${escapeHtml(firstEv.name)}</span>
+                                    <span class="event-time-range">${timeDisplay}</span>
+                                    <span class="overlap-badge">+${totalInGroup - 1}</span>
+                                </div>`;
                             }
                         }
                     });
@@ -2497,7 +2528,25 @@
                 el.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const eventId = parseInt(this.dataset.eventId);
-                    openEventSettings(eventId);
+                    
+                    // Check if this event has overlap data
+                    const overlapIds = this.dataset.overlapIds;
+                    if (overlapIds) {
+                        // This event has overlapping events
+                        const ids = JSON.parse(overlapIds);
+                        const dateStr = this.closest('.schedule-day-grid').dataset.date;
+                        const date = new Date(dateStr);
+                        const allEvents = ids.map(id => events.find(e => e.id === id)).filter(e => e);
+                        
+                        // Get the time string for display
+                        const timeStr = this.querySelector('.event-time-range')?.textContent?.trim() || 'this time';
+                        const displayDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        
+                        // Show the day popup with all overlapping events
+                        showDayPopup(date, allEvents);
+                    } else {
+                        openEventSettings(eventId);
+                    }
                 });
             });
             
