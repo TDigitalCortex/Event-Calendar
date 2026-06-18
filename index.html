@@ -1132,6 +1132,25 @@
             cursor: pointer;
         }
 
+        .settings-group textarea {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 16px;
+            border: 1px solid #d1d9e6;
+            font-size: 0.9rem;
+            outline: none;
+            background: white;
+            color: #0b1e33;
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .settings-group textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb30;
+        }
+
         .settings-note {
             font-size: 0.8rem;
             color: #94a3b8;
@@ -1409,6 +1428,7 @@
             .overlap-selector { max-width: 95%; padding: 1rem; }
             .overlap-item { padding: 0.4rem 0.6rem; }
             .schedule-time-column { flex: 0 0 35px; min-width: 35px; }
+            .settings-group textarea { min-height: 60px; font-size: 0.8rem; }
         }
 
         @media (max-width: 400px) {
@@ -1424,6 +1444,7 @@
             .schedule-time-slot { font-size: 0.5rem; height: 30px; min-height: 30px; }
             .schedule-hour-slot { height: 30px; min-height: 30px; }
             .schedule-day-grid { padding-top: 0.4rem; }
+            .settings-group textarea { min-height: 50px; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -1664,6 +1685,12 @@
         </div>
 
         <div class="settings-group">
+            <label>Notes</label>
+            <textarea id="eventNotes" placeholder="Add notes for this event..."></textarea>
+            <div class="settings-note">Any additional information about this event.</div>
+        </div>
+
+        <div class="settings-group">
             <label>Schedule Color</label>
             <div class="schedule-color-picker">
                 <input type="color" id="scheduleColorPicker" value="#dbeafe">
@@ -1680,7 +1707,7 @@
                 <input type="checkbox" id="hideTimeCheckbox">
                 <span>Show dates without time (date only)</span>
             </div>
-            <div class="settings-note">Applies to all three date fields above.</div>
+            <div class="settings-note">When enabled, removes time from all date displays for this event.</div>
         </div>
 
         <div class="settings-group">
@@ -1776,6 +1803,7 @@
         const eventEndDate = document.getElementById('eventEndDate');
         const eventCreatedAt = document.getElementById('eventCreatedAt');
         const hideTimeCheckbox = document.getElementById('hideTimeCheckbox');
+        const eventNotes = document.getElementById('eventNotes');
         const scheduleColorPicker = document.getElementById('scheduleColorPicker');
         const scheduleColorHex = document.getElementById('scheduleColorHex');
         const scheduleColorPreview = document.getElementById('scheduleColorPreview');
@@ -1850,13 +1878,16 @@
         }
 
         function getDisplayDate(event) {
+            // Check if hide time is enabled for this event
+            const hideTime = event.hideTime || false;
+            
             if (event.startDate && event.endDate) {
-                const start = formatDate(event.startDate, event.hideTime || false, useStandardTime);
-                const end = formatDate(event.endDate, event.hideTime || false, useStandardTime);
+                const start = formatDate(event.startDate, hideTime, useStandardTime);
+                const end = formatDate(event.endDate, hideTime, useStandardTime);
                 return `${start} → ${end}`;
             }
             if (event.eventDate) {
-                return formatDate(event.eventDate, event.hideTime || false, useStandardTime);
+                return formatDate(event.eventDate, hideTime, useStandardTime);
             }
             return 'No date set';
         }
@@ -1888,6 +1919,11 @@
             let startTime = null;
             let endTime = null;
             let isSingleEvent = false;
+            
+            // If hide time is enabled, don't show in grid
+            if (event.hideTime) {
+                return { startTime: null, endTime: null, isSingleEvent: true };
+            }
             
             if (event.eventDate) {
                 const d = new Date(event.eventDate);
@@ -2022,6 +2058,7 @@
                         <span class="event-color-preview" style="background:${color};"></span>
                         <span class="event-name-popup">${escapeHtml(ev.name)}</span>
                         <span class="event-time-popup">${getDisplayDate(ev)}</span>
+                        ${ev.notes ? `<div style="font-size:0.65rem; color:#64748b; margin-top:0.2rem;">📝 ${escapeHtml(ev.notes)}</div>` : ''}
                     `;
                     div.addEventListener('click', function() {
                         closeDayPopup();
@@ -2240,9 +2277,10 @@
                 const dayEvents = getEventsForDate(date);
                 
                 // Filter events that have a specific time (including midnight 00:00) for the grid
+                // Skip events with hideTime enabled
                 const timedEvents = dayEvents.filter(ev => {
+                    if (ev.hideTime) return false;
                     if (ev.eventDate) {
-                        // Include all events with eventDate (including midnight)
                         return true;
                     }
                     return true; // Range events always have time
@@ -2571,6 +2609,7 @@
             eventEndDate.value = ev.endDate || '';
             eventCreatedAt.value = ev.createdAt || 'Unknown';
             hideTimeCheckbox.checked = ev.hideTime || false;
+            eventNotes.value = ev.notes || '';
             
             const color = ev.scheduleColor || '#dbeafe';
             scheduleColorPicker.value = color;
@@ -2791,6 +2830,7 @@
                 startDate: null,
                 endDate: null,
                 hideTime: false,
+                notes: '',
                 scheduleColor: null
             });
 
@@ -2820,6 +2860,7 @@
                     ev.startDate = eventStartDate.value || null;
                     ev.endDate = eventEndDate.value || null;
                     ev.hideTime = hideTimeCheckbox.checked;
+                    ev.notes = eventNotes.value || '';
                     
                     const color = scheduleColorPicker.value;
                     if (color && color !== '#dbeafe') {
@@ -2910,6 +2951,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Weekly team sync meeting',
                     scheduleColor: '#dbeafe'
                 },
                 { 
@@ -2921,6 +2963,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Prepare presentation',
                     scheduleColor: '#fef3c7'
                 },
                 { 
@@ -2932,6 +2975,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Daily standup',
                     scheduleColor: '#d1fae5'
                 },
                 { 
@@ -2943,6 +2987,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Lunch with team',
                     scheduleColor: '#fce4ec'
                 },
                 { 
@@ -2954,6 +2999,7 @@
                     startDate: yesterday.toISOString(),
                     endDate: tomorrow.toISOString(),
                     hideTime: false,
+                    notes: 'Final submission deadline',
                     scheduleColor: '#e0f7fa'
                 },
                 { 
@@ -2965,6 +3011,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: true,
+                    notes: 'Review designs',
                     scheduleColor: '#f3e5f5'
                 },
                 { 
@@ -2976,6 +3023,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Plan next sprint',
                     scheduleColor: '#fff3e0'
                 },
                 { 
@@ -2987,6 +3035,7 @@
                     startDate: workshopStart.toISOString(),
                     endDate: workshopEnd.toISOString(),
                     hideTime: false,
+                    notes: 'Team workshop',
                     scheduleColor: '#e8f5e9'
                 },
                 { 
@@ -2998,6 +3047,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Annual conference',
                     scheduleColor: '#ffebee'
                 },
                 { 
@@ -3009,6 +3059,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Public holiday',
                     scheduleColor: '#e3f2fd'
                 },
                 { 
@@ -3020,6 +3071,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Team member birthday',
                     scheduleColor: '#fff8e1'
                 },
                 { 
@@ -3031,6 +3083,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Company-wide event',
                     scheduleColor: '#e8f5e9'
                 },
                 { 
@@ -3042,6 +3095,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Product launch at midnight!',
                     scheduleColor: '#c7d2fe'
                 },
                 { 
@@ -3053,6 +3107,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: 'Late night coding session',
                     scheduleColor: '#fed7aa'
                 },
                 { 
@@ -3064,6 +3119,7 @@
                     startDate: null,
                     endDate: null,
                     hideTime: false,
+                    notes: '',
                     scheduleColor: null
                 },
             ];
