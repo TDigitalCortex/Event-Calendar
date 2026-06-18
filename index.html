@@ -2245,12 +2245,12 @@
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
-                // Filter events that have a specific time (not midnight) for the grid
+                // Filter events that have a specific time (including midnight 00:00) for the grid
                 const timedEvents = dayEvents.filter(ev => {
                     if (ev.eventDate) {
                         const d = new Date(ev.eventDate);
-                        // Check if it's not midnight (00:00:00) - midnight events go to header
-                        return !(d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0);
+                        // Include midnight (00:00:00) events - they should show at 00:00
+                        return true;
                     }
                     return true; // Range events always have time
                 });
@@ -2267,7 +2267,7 @@
                     html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
                 }
                 
-                // Add events positioned by time (only timed events, not all-day)
+                // Add events positioned by time (all timed events including midnight)
                 if (timedEvents.length === 0) {
                     html += `<div class="schedule-empty">No timed events</div>`;
                 } else {
@@ -2276,15 +2276,11 @@
                     timedEvents.forEach(ev => {
                         const { startTime, endTime, isSingleEvent } = getEventTimeRange(ev, date);
                         if (startTime) {
-                            // For events at midnight (00:00), they should go to header
-                            const hasTime = !(startTime.getHours() === 0 && startTime.getMinutes() === 0 && startTime.getSeconds() === 0);
-                            if (hasTime) {
-                                const key = startTime.toISOString();
-                                if (!eventsByTime[key]) {
-                                    eventsByTime[key] = [];
-                                }
-                                eventsByTime[key].push({ event: ev, startTime, endTime, isSingleEvent });
+                            const key = startTime.toISOString();
+                            if (!eventsByTime[key]) {
+                                eventsByTime[key] = [];
                             }
+                            eventsByTime[key].push({ event: ev, startTime, endTime, isSingleEvent });
                         }
                     });
                     
@@ -2902,6 +2898,10 @@
             allDay3.setHours(0, 0, 0, 0);
             const allDay4 = new Date();
             allDay4.setHours(0, 0, 0, 0);
+            
+            // Midnight event (12:00 AM)
+            const midnightEvent = new Date();
+            midnightEvent.setHours(0, 0, 0, 0);
 
             events = [
                 { 
@@ -3035,6 +3035,17 @@
                     endDate: null,
                     hideTime: false,
                     scheduleColor: '#e8f5e9'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Midnight Launch', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: midnightEvent.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#c7d2fe'
                 },
                 { 
                     id: nextId++, 
