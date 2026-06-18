@@ -817,7 +817,7 @@
             box-shadow: 0 0 0 3px #2563eb30;
         }
 
-        /* --- Fixed Date/Time Inputs --- */
+        /* --- Fixed Date/Time Inputs with AM/PM --- */
         .settings-group input[type="datetime-local"] {
             width: 100%;
             padding: 0.6rem 1rem;
@@ -856,6 +856,17 @@
             font-size: 0.8rem;
             color: #94a3b8;
             margin-top: 0.3rem;
+        }
+
+        .settings-note .key-hint {
+            display: inline-block;
+            background: #eef2f6;
+            padding: 0.05rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #1e293b;
+            margin: 0 0.1rem;
         }
 
         .save-settings-btn {
@@ -935,6 +946,28 @@
 
         .date-range-item .date-input-wrapper {
             flex-wrap: nowrap;
+        }
+
+        /* AM/PM Toggle Hint */
+        .ampm-hint {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ampm-hint .key {
+            display: inline-block;
+            background: #eef2f6;
+            padding: 0.05rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.65rem;
+            color: #1e293b;
+            border: 1px solid #d1d9e6;
         }
 
         /* --- Footer --- */
@@ -1196,6 +1229,9 @@
                 <input type="datetime-local" id="eventDateSingle">
                 <button class="clear-date-btn" id="clearEventDate"><i class="fas fa-times-circle"></i> Clear</button>
             </div>
+            <div class="ampm-hint">
+                <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
+            </div>
             <div class="settings-note">Set a single date and time for this event.</div>
         </div>
 
@@ -1208,12 +1244,18 @@
                         <input type="datetime-local" id="eventStartDate">
                         <button class="clear-date-btn" id="clearStartDate"><i class="fas fa-times-circle"></i> Clear</button>
                     </div>
+                    <div class="ampm-hint">
+                        <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
+                    </div>
                 </div>
                 <div class="date-range-item">
                     <label>End Date</label>
                     <div class="date-input-wrapper">
                         <input type="datetime-local" id="eventEndDate">
                         <button class="clear-date-btn" id="clearEndDate"><i class="fas fa-times-circle"></i> Clear</button>
+                    </div>
+                    <div class="ampm-hint">
+                        <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
                     </div>
                 </div>
             </div>
@@ -1464,6 +1506,38 @@
                 return `${hours}:${minutes} ${ampm}`;
             }
             return `${String(hours).padStart(2, '0')}:${minutes}`;
+        }
+
+        // --- AM/PM Toggle Function ---
+        function toggleAmPm(input) {
+            if (!input || !input.value) return;
+            
+            try {
+                let date = new Date(input.value);
+                if (isNaN(date.getTime())) return;
+                
+                let hours = date.getHours();
+                // Toggle AM/PM by adding or subtracting 12 hours
+                if (hours >= 12) {
+                    hours -= 12; // PM -> AM
+                } else {
+                    hours += 12; // AM -> PM
+                }
+                date.setHours(hours);
+                
+                // Format back to datetime-local string
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hrs = String(date.getHours()).padStart(2, '0');
+                const mins = String(date.getMinutes()).padStart(2, '0');
+                input.value = `${year}-${month}-${day}T${hrs}:${mins}`;
+                
+                // Trigger change event
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            } catch (e) {
+                // Ignore errors
+            }
         }
 
         // --- Show Day Popup ---
@@ -2002,6 +2076,61 @@
         syncColorInputs(pageBgColor, pageBgText);
         syncColorInputs(taskCardColor, taskCardText);
 
+        // --- Setup AM/PM keyboard shortcuts ---
+        function setupAmPmShortcuts() {
+            const dateInputs = [eventDateSingle, eventStartDate, eventEndDate];
+            
+            dateInputs.forEach(input => {
+                input.addEventListener('keydown', function(e) {
+                    // Check if A or P key is pressed (case insensitive)
+                    if (e.key === 'a' || e.key === 'A') {
+                        e.preventDefault();
+                        // Set to AM: ensure hours are < 12
+                        if (this.value) {
+                            try {
+                                let date = new Date(this.value);
+                                if (!isNaN(date.getTime())) {
+                                    let hours = date.getHours();
+                                    if (hours >= 12) {
+                                        date.setHours(hours - 12);
+                                    }
+                                    // If hours is 0, keep it as 0 (12 AM)
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hrs = String(date.getHours()).padStart(2, '0');
+                                    const mins = String(date.getMinutes()).padStart(2, '0');
+                                    this.value = `${year}-${month}-${day}T${hrs}:${mins}`;
+                                    this.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            } catch (err) { /* ignore */ }
+                        }
+                    } else if (e.key === 'p' || e.key === 'P') {
+                        e.preventDefault();
+                        // Set to PM: ensure hours are >= 12
+                        if (this.value) {
+                            try {
+                                let date = new Date(this.value);
+                                if (!isNaN(date.getTime())) {
+                                    let hours = date.getHours();
+                                    if (hours < 12) {
+                                        date.setHours(hours + 12);
+                                    }
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hrs = String(date.getHours()).padStart(2, '0');
+                                    const mins = String(date.getMinutes()).padStart(2, '0');
+                                    this.value = `${year}-${month}-${day}T${hrs}:${mins}`;
+                                    this.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            } catch (err) { /* ignore */ }
+                        }
+                    }
+                });
+            });
+        }
+
         // --- Add event ---
         function addEvent() {
             const name = eventNameInput.value.trim();
@@ -2186,6 +2315,9 @@
             setupTabs();
             updateClock();
             setInterval(updateClock, 1000);
+
+            // Setup AM/PM keyboard shortcuts
+            setupAmPmShortcuts();
 
             // Event listeners
             addEventBtn.addEventListener('click', addEvent);
