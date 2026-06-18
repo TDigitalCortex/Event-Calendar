@@ -1,0 +1,368 @@
+/* style.css - Event Clock Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #f6f9fc 0%, #e9f1f8 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+.clock-card {
+    max-width: 600px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 48px;
+    padding: 2rem 2rem 2.2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transition: all 0.2s ease;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h1 i {
+    color: #3b82f6;
+    font-size: 1.6rem;
+}
+
+.timer-display {
+    background: #ffffffcc;
+    backdrop-filter: blur(4px);
+    border-radius: 60px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+#timer {
+    font-size: 4.8rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #0b1e33;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.timer-controls button {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0.3rem 0.6rem;
+    border-radius: 40px;
+    background: #f1f5f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+}
+
+.timer-controls button:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    transform: scale(1.02);
+}
+
+.timer-controls button:active {
+    transform: scale(0.94);
+}
+
+.timer-controls .primary-btn {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 8px 18px -6px #3b82f680;
+}
+
+.timer-controls .primary-btn:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.settings-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #f8fafc;
+    padding: 1rem 1.2rem;
+    border-radius: 40px;
+    margin-bottom: 2rem;
+    border: 1px solid #e9edf2;
+}
+
+.duration-control {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.duration-control label {
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.duration-control input {
+    width: 70px;
+    padding: 0.4rem 0.2rem 0.4rem 0.8rem;
+    border-radius: 30px;
+    border: 1px solid #d1d9e6;
+    background: white;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #0b1e33;
+    outline: none;
+    transition: 0.15s;
+}
+
+.duration-control input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #3b82f630;
+}
+
+.alarm-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alarm-selector i {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+.alarm-selector select {
+    padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+    border-radius: 30px;
+    border: 1px solid #d1d9e6;
+    background: white;
+    font-size: 0.9rem;
+    color: #0b1e33;
+    outline: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 8"><path fill="%23334155" d="M6 8L0 0h12z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.event-section {
+    margin-top: 0.5rem;
+}
+
+.event-input-area {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+}
+
+.event-input-area input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border-radius: 40px;
+    border: 1px solid #d1d9e6;
+    background: white;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.15s;
+}
+
+.event-input-area input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #3b82f630;
+}
+
+.event-input-area button {
+    background: #3b82f6;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 0 1.3rem;
+    border-radius: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    box-shadow: 0 6px 14px -4px #3b82f670;
+}
+
+.event-input-area button:hover {
+    background: #2563eb;
+    transform: scale(1.02);
+}
+
+.event-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 24px;
+    background: #f1f5f9;
+    padding: 0.4rem 0.2rem;
+}
+
+.event-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem 0.7rem 1.2rem;
+    background: white;
+    margin: 0.3rem 0.4rem;
+    border-radius: 40px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e9edf2;
+    transition: 0.1s;
+}
+
+.event-list li:hover {
+    background: #fafcff;
+    border-color: #cbd5e1;
+}
+
+.event-name {
+    font-weight: 500;
+    color: #0b1e33;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.event-name i {
+    color: #3b82f6;
+    font-size: 0.9rem;
+    width: 1.2rem;
+}
+
+.event-time {
+    font-size: 0.9rem;
+    background: #eef2f6;
+    padding: 0.15rem 0.8rem;
+    border-radius: 30px;
+    color: #1e293b;
+    font-weight: 450;
+}
+
+.event-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.event-actions button {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 30px;
+    transition: 0.1s;
+}
+
+.event-actions .delete-btn:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+.event-actions .play-btn:hover {
+    color: #3b82f6;
+    background: #dbeafe;
+}
+
+.empty-events {
+    text-align: center;
+    color: #94a3b8;
+    padding: 1.2rem 0.5rem;
+    font-size: 0.95rem;
+}
+
+.footer-credit {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.2rem;
+}
+
+/* Scrollbar styling */
+.event-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.event-list::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 20px;
+}
+
+.event-list::-webkit-scrollbar-thumb {
+    background: #b9c7da;
+    border-radius: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .clock-card {
+        padding: 1.5rem;
+        border-radius: 32px;
+    }
+    
+    #timer {
+        font-size: 3.6rem;
+    }
+    
+    .settings-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+    }
+    
+    .duration-control {
+        justify-content: center;
+    }
+    
+    .alarm-selector {
+        justify-content: center;
+    }
+    
+    .timer-controls button {
+        width: 48px;
+        height: 48px;
+        font-size: 1.6rem;
+    }
+}
