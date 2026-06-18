@@ -590,7 +590,7 @@
             z-index: 30;
             display: flex;
             flex-direction: column;
-            padding-top: 2.2rem;
+            padding-top: 0.8rem;
         }
 
         .schedule-time-slot {
@@ -656,7 +656,7 @@
             position: relative;
             flex: 1;
             min-height: 720px;
-            padding-top: 2.2rem;
+            padding-top: 0.8rem;
         }
 
         .schedule-hour-slot {
@@ -1367,8 +1367,8 @@
             .schedule-color-picker { gap: 0.5rem; }
             .overlap-selector { max-width: 90%; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.5rem; }
-            .schedule-time-column { padding-top: 1.8rem; }
-            .schedule-day-grid { padding-top: 1.8rem; }
+            .schedule-time-column { padding-top: 0.6rem; }
+            .schedule-day-grid { padding-top: 0.6rem; }
         }
 
         @media (max-width: 650px) {
@@ -1385,9 +1385,9 @@
             .calendar-day .day-number { font-size: 0.7rem; }
             .calendar-day .day-events .cal-event { font-size: 0.5rem; }
             .schedule-container { min-width: 500px; }
-            .schedule-time-column { flex: 0 0 40px; min-width: 40px; padding-top: 1.6rem; }
+            .schedule-time-column { flex: 0 0 40px; min-width: 40px; padding-top: 0.5rem; }
             .schedule-time-slot { height: 40px; min-height: 40px; font-size: 0.6rem; }
-            .schedule-day-grid { min-height: 480px; padding-top: 1.6rem; }
+            .schedule-day-grid { min-height: 480px; padding-top: 0.5rem; }
             .schedule-hour-slot { height: 40px; min-height: 40px; }
             .schedule-event { min-height: 16px; padding: 0.1rem 0.2rem; }
             .schedule-event .event-name-small { font-size: 0.5rem; }
@@ -1420,10 +1420,10 @@
             .overlap-selector { padding: 0.8rem; }
             .overlap-item .overlap-time { font-size: 0.65rem; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
-            .schedule-time-column { flex: 0 0 30px; min-width: 30px; padding-top: 1.2rem; }
+            .schedule-time-column { flex: 0 0 30px; min-width: 30px; padding-top: 0.4rem; }
             .schedule-time-slot { font-size: 0.5rem; height: 30px; min-height: 30px; }
             .schedule-hour-slot { height: 30px; min-height: 30px; }
-            .schedule-day-grid { padding-top: 1.2rem; }
+            .schedule-day-grid { padding-top: 0.4rem; }
         }
     </style>
 </head>
@@ -2264,6 +2264,7 @@
                 const timedEvents = dayEvents.filter(ev => {
                     if (ev.eventDate) {
                         const d = new Date(ev.eventDate);
+                        // Check if it's not midnight (00:00:00) - midnight events go to header
                         return !(d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0);
                     }
                     return true; // Range events always have time
@@ -2290,11 +2291,15 @@
                     timedEvents.forEach(ev => {
                         const { startTime, endTime, isSingleEvent } = getEventTimeRange(ev, date);
                         if (startTime) {
-                            const key = startTime.toISOString();
-                            if (!eventsByTime[key]) {
-                                eventsByTime[key] = [];
+                            // For events at midnight (00:00), they should go to header
+                            const hasTime = !(startTime.getHours() === 0 && startTime.getMinutes() === 0 && startTime.getSeconds() === 0);
+                            if (hasTime) {
+                                const key = startTime.toISOString();
+                                if (!eventsByTime[key]) {
+                                    eventsByTime[key] = [];
+                                }
+                                eventsByTime[key].push({ event: ev, startTime, endTime, isSingleEvent });
                             }
-                            eventsByTime[key].push({ event: ev, startTime, endTime, isSingleEvent });
                         }
                     });
                     
