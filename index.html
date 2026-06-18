@@ -1766,13 +1766,15 @@
         function getEventTimeRange(event, date) {
             let startTime = null;
             let endTime = null;
+            let isSingleEvent = false;
             
             if (event.eventDate) {
                 const d = new Date(event.eventDate);
                 if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
                     startTime = d;
-                    endTime = new Date(d);
-                    endTime.setHours(endTime.getHours() + 1);
+                    // Single event with only a date - no end time
+                    isSingleEvent = true;
+                    endTime = null;
                 }
             } else if (event.startDate && event.endDate) {
                 const start = new Date(event.startDate);
@@ -1797,10 +1799,11 @@
                         endTime = new Date(date);
                         endTime.setHours(23, 59, 59, 999);
                     }
+                    isSingleEvent = false;
                 }
             }
             
-            return { startTime, endTime };
+            return { startTime, endTime, isSingleEvent };
         }
 
         // --- Format time for display ---
@@ -2063,13 +2066,13 @@
                     // Group events by their start time to handle overlaps
                     const eventsByTime = {};
                     dayEvents.forEach(ev => {
-                        const { startTime, endTime } = getEventTimeRange(ev, date);
-                        if (startTime && endTime) {
+                        const { startTime, endTime, isSingleEvent } = getEventTimeRange(ev, date);
+                        if (startTime) {
                             const key = startTime.toISOString();
                             if (!eventsByTime[key]) {
                                 eventsByTime[key] = [];
                             }
-                            eventsByTime[key].push({ event: ev, startTime, endTime });
+                            eventsByTime[key].push({ event: ev, startTime, endTime, isSingleEvent });
                         }
                     });
                     
@@ -2080,33 +2083,43 @@
                         const firstItem = group[0];
                         const startTime = firstItem.startTime;
                         const endTime = firstItem.endTime;
+                        const isSingleEvent = firstItem.isSingleEvent;
                         
                         const startHour = startTime.getHours() + startTime.getMinutes() / 60;
-                        const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+                        const endHour = endTime ? endTime.getHours() + endTime.getMinutes() / 60 : startHour + 1;
                         const duration = endHour - startHour;
                         
                         if (duration > 0) {
                             const topPercent = (startHour / 24) * 100;
                             const heightPercent = (duration / 24) * 100;
                             
-                            const startTimeStr = formatTimeDisplay(startTime, useStandardTime);
-                            const endTimeStr = formatTimeDisplay(endTime, useStandardTime);
-                            
                             if (totalInGroup === 1) {
                                 // Single event - show normally
                                 const ev = group[0].event;
                                 const color = ev.scheduleColor || defaultColors[ev.id % defaultColors.length] || '#dbeafe';
+                                
+                                // Determine time display
+                                let timeDisplay = '';
+                                if (isSingleEvent) {
+                                    // Single date with time - show @time
+                                    const timeStr = formatTimeDisplay(startTime, useStandardTime);
+                                    timeDisplay = `@ ${timeStr}`;
+                                } else if (endTime) {
+                                    // Range with start and end
+                                    const startTimeStr = formatTimeDisplay(startTime, useStandardTime);
+                                    const endTimeStr = formatTimeDisplay(endTime, useStandardTime);
+                                    timeDisplay = `${startTimeStr} → ${endTimeStr}`;
+                                } else {
+                                    // Fallback - just show start time
+                                    timeDisplay = formatTimeDisplay(startTime, useStandardTime);
+                                }
                                 
                                 html += `<div class="schedule-event" 
                                           data-event-id="${ev.id}"
                                           style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
                                           title="${escapeHtml(ev.name)}">
                                     <span class="event-name-small">${escapeHtml(ev.name)}</span>
-                                    <span class="event-time-range">
-                                        <span class="event-start">${startTimeStr}</span>
-                                        <span class="time-separator">→</span>
-                                        <span class="event-end">${endTimeStr}</span>
-                                    </span>
+                                    <span class="event-time-range">${timeDisplay}</span>
                                 </div>`;
                             } else {
                                 // Multiple events - show first one with badge
@@ -2116,17 +2129,26 @@
                                 // Collect all event IDs in this group
                                 const eventIds = group.map(item => item.event.id);
                                 
+                                // Determine time display for the group
+                                let timeDisplay = '';
+                                if (isSingleEvent) {
+                                    const timeStr = formatTimeDisplay(startTime, useStandardTime);
+                                    timeDisplay = `@ ${timeStr}`;
+                                } else if (endTime) {
+                                    const startTimeStr = formatTimeDisplay(startTime, useStandardTime);
+                                    const endTimeStr = formatTimeDisplay(endTime, useStandardTime);
+                                    timeDisplay = `${startTimeStr} → ${endTimeStr}`;
+                                } else {
+                                    timeDisplay = formatTimeDisplay(startTime, useStandardTime);
+                                }
+                                
                                 html += `<div class="schedule-event overlap" 
                                           data-event-id="${firstEv.id}"
                                           data-overlap-ids='${JSON.stringify(eventIds)}'
                                           style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
                                           title="${escapeHtml(firstEv.name)} + ${totalInGroup - 1} more">
                                     <span class="event-name-small">${escapeHtml(firstEv.name)}</span>
-                                    <span class="event-time-range">
-                                        <span class="event-start">${startTimeStr}</span>
-                                        <span class="time-separator">→</span>
-                                        <span class="event-end">${endTimeStr}</span>
-                                    </span>
+                                    <span class="event-time-range">${timeDisplay}</span>
                                     <span class="overlap-badge">+${totalInGroup - 1}</span>
                                 </div>`;
                             }
