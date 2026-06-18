@@ -575,7 +575,6 @@
             padding: 0.5rem;
             min-width: 700px;
             position: relative;
-            padding-top: 0.8rem;
         }
 
         .schedule-time-column {
@@ -588,13 +587,6 @@
             position: sticky;
             left: 0;
             z-index: 30;
-            margin-top: -0.3rem;
-        }
-
-        /* Spacer for the time column to align with the date header */
-        .schedule-time-spacer {
-            height: 0.8rem;
-            background: transparent;
         }
 
         .schedule-time-slot {
@@ -620,7 +612,6 @@
             border: 1px solid #e9edf2;
             min-width: 80px;
             position: relative;
-            margin-top: -0.3rem;
         }
 
         .schedule-day-column.today-column {
@@ -1626,7 +1617,7 @@
             <div class="ampm-hint">
                 <span>Press <span class="key">A</span> for AM or <span class="key">P</span> for PM to toggle</span>
             </div>
-            <div class="settings-note">Set a single date and time for this event.</div>
+            <div class="settings-note">Set a single date and time for this event. Use 00:00 for midnight.</div>
         </div>
 
         <div class="settings-group">
@@ -2235,11 +2226,8 @@
             // Build schedule HTML
             let html = '';
             
-            // Time column - with spacer at top for alignment
+            // Time column - all 24 hours from 00:00 to 23:00
             html += `<div class="schedule-time-column">`;
-            // Add a spacer div at the top to align with the date header
-            html += `<div class="schedule-time-spacer"></div>`;
-            // Start from 00:00 (midnight)
             for (let hour = 0; hour < 24; hour++) {
                 const timeLabel = useStandardTime ? 
                     `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}` :
@@ -2272,7 +2260,7 @@
                     </div>
                     <div class="schedule-day-grid" data-date="${date.toISOString()}">`;
                 
-                // Add hour slots - starting from 00:00
+                // Add hour slots - 24 hours from 00:00 to 23:00
                 for (let hour = 0; hour < 24; hour++) {
                     html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
                 }
