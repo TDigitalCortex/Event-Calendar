@@ -486,7 +486,7 @@
         .schedule-date-header {
             display: flex;
             gap: 0.3rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0;
             background: #f8fafc;
             border-radius: 24px 24px 0 0;
             padding: 0.5rem 0.5rem 0.3rem;
@@ -590,7 +590,7 @@
             z-index: 30;
             display: flex;
             flex-direction: column;
-            padding-top: 0.8rem;
+            padding-top: 2.2rem;
         }
 
         .schedule-time-slot {
@@ -638,6 +638,7 @@
             margin-bottom: 0;
             background: inherit;
             flex-shrink: 0;
+            display: none;
         }
 
         .schedule-day-header.today-header {
@@ -655,7 +656,7 @@
             position: relative;
             flex: 1;
             min-height: 720px;
-            padding-top: 0.8rem;
+            padding-top: 2.2rem;
         }
 
         .schedule-hour-slot {
@@ -1366,8 +1367,8 @@
             .schedule-color-picker { gap: 0.5rem; }
             .overlap-selector { max-width: 90%; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.5rem; }
-            .schedule-time-column { padding-top: 0.6rem; }
-            .schedule-day-grid { padding-top: 0.6rem; }
+            .schedule-time-column { padding-top: 1.8rem; }
+            .schedule-day-grid { padding-top: 1.8rem; }
         }
 
         @media (max-width: 650px) {
@@ -1384,9 +1385,9 @@
             .calendar-day .day-number { font-size: 0.7rem; }
             .calendar-day .day-events .cal-event { font-size: 0.5rem; }
             .schedule-container { min-width: 500px; }
-            .schedule-time-column { flex: 0 0 40px; min-width: 40px; padding-top: 0.5rem; }
+            .schedule-time-column { flex: 0 0 40px; min-width: 40px; padding-top: 1.6rem; }
             .schedule-time-slot { height: 40px; min-height: 40px; font-size: 0.6rem; }
-            .schedule-day-grid { min-height: 480px; padding-top: 0.5rem; }
+            .schedule-day-grid { min-height: 480px; padding-top: 1.6rem; }
             .schedule-hour-slot { height: 40px; min-height: 40px; }
             .schedule-event { min-height: 16px; padding: 0.1rem 0.2rem; }
             .schedule-event .event-name-small { font-size: 0.5rem; }
@@ -1419,10 +1420,10 @@
             .overlap-selector { padding: 0.8rem; }
             .overlap-item .overlap-time { font-size: 0.65rem; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
-            .schedule-time-column { flex: 0 0 30px; min-width: 30px; padding-top: 0.4rem; }
+            .schedule-time-column { flex: 0 0 30px; min-width: 30px; padding-top: 1.2rem; }
             .schedule-time-slot { font-size: 0.5rem; height: 30px; min-height: 30px; }
             .schedule-hour-slot { height: 30px; min-height: 30px; }
-            .schedule-day-grid { padding-top: 0.4rem; }
+            .schedule-day-grid { padding-top: 1.2rem; }
         }
     </style>
 </head>
@@ -2269,7 +2270,7 @@
                 });
                 
                 html += `<div class="schedule-day-column${isToday ? ' today-column' : ''}">
-                    <div class="schedule-day-header${isToday ? ' today-header' : ''}">
+                    <div class="schedule-day-header${isToday ? ' today-header' : ''}" style="display:none;">
                         ${dayNames[i]}
                         <span class="day-number">${date.getDate()}</span>
                     </div>
