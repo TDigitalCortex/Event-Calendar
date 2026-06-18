@@ -2455,9 +2455,6 @@
                                 </div>`;
                             } else {
                                 // Multiple events - show each with offset
-                                const firstEv = group[0].event;
-                                const color = firstEv.scheduleColor || defaultColors[firstEv.id % defaultColors.length] || '#dbeafe';
-                                
                                 // Determine time display for the group
                                 let timeDisplay = '';
                                 if (isSingleEvent) {
