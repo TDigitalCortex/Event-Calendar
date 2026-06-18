@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Clock · Date Management</title>
+    <title>Event Clock · Date Manager</title>
     <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -366,32 +366,14 @@
             font-size: 0.9rem;
         }
 
-        .settings-group .color-row {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .settings-group input[type="color"] {
-            width: 44px;
-            height: 44px;
-            border: 2px solid #d1d9e6;
-            border-radius: 30px;
-            padding: 2px;
-            cursor: pointer;
-            background: white;
-        }
-
         .settings-group input[type="text"],
         .settings-group input[type="datetime-local"] {
-            flex: 1;
+            width: 100%;
             padding: 0.5rem 1rem;
             border-radius: 30px;
             border: 1px solid #d1d9e6;
             font-size: 0.9rem;
             outline: none;
-            min-width: 140px;
         }
 
         .settings-group input[type="text"]:focus,
@@ -483,7 +465,7 @@
     <!-- Global Settings Button -->
     <div class="global-settings-area">
         <button class="global-settings-btn" id="globalSettingsBtn">
-            <i class="fas fa-palette"></i> Global Styles
+            <i class="fas fa-palette"></i> Global Settings
         </button>
     </div>
 
@@ -514,60 +496,12 @@
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-box" id="modalBox">
         <div class="modal-header">
-            <h2><i class="fas fa-palette"></i> <span id="modalTitle">Global Styles</span></h2>
+            <h2><i class="fas fa-cog"></i> <span id="modalTitle">Global Settings</span></h2>
             <button class="modal-close" id="modalCloseBtn">&times;</button>
         </div>
 
-        <!-- Global Styles Section -->
+        <!-- Global Settings Section -->
         <div id="globalSettingsSection">
-            <div class="settings-group">
-                <label>Card Background</label>
-                <div class="color-row">
-                    <input type="color" id="cardBgColor" value="#ffffff">
-                    <input type="text" id="cardBgText" value="#ffffff" placeholder="#hex">
-                </div>
-            </div>
-
-            <div class="settings-group">
-                <label>Event Text Color</label>
-                <div class="color-row">
-                    <input type="color" id="eventTextColor" value="#0b1e33">
-                    <input type="text" id="eventTextText" value="#0b1e33" placeholder="#hex">
-                </div>
-            </div>
-
-            <div class="settings-group">
-                <label>Clock Time Color</label>
-                <div class="color-row">
-                    <input type="color" id="clockColor" value="#0b1e33">
-                    <input type="text" id="clockText" value="#0b1e33" placeholder="#hex">
-                </div>
-            </div>
-
-            <div class="settings-group">
-                <label>Clock Background</label>
-                <div class="color-row">
-                    <input type="color" id="clockBgColor" value="#f8fafc">
-                    <input type="text" id="clockBgText" value="#f8fafc" placeholder="#hex">
-                </div>
-            </div>
-
-            <div class="settings-group">
-                <label>Page Background</label>
-                <div class="color-row">
-                    <input type="color" id="pageBgColor" value="#f2f6fc">
-                    <input type="text" id="pageBgText" value="#f2f6fc" placeholder="#hex">
-                </div>
-            </div>
-
-            <div class="settings-group">
-                <label>Task Card Color (event items)</label>
-                <div class="color-row">
-                    <input type="color" id="taskCardColor" value="#ffffff">
-                    <input type="text" id="taskCardText" value="#ffffff" placeholder="#hex">
-                </div>
-            </div>
-
             <div class="settings-group">
                 <label>Standard Time Format</label>
                 <div class="checkbox-label">
@@ -623,7 +557,7 @@
         </div>
 
         <button class="save-settings-btn" id="saveSettingsBtn"><i class="fas fa-save"></i> Apply Settings</button>
-        <div class="settings-note" style="margin-top:0.8rem;">Global styles apply to the whole page. Event settings update the selected event.</div>
+        <div class="settings-note" style="margin-top:0.8rem;">Global settings affect the entire page. Event settings update the selected event.</div>
     </div>
 </div>
 
@@ -650,19 +584,7 @@
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
         const globalSettingsBtn = document.getElementById('globalSettingsBtn');
 
-        // Global color inputs
-        const cardBgColor = document.getElementById('cardBgColor');
-        const cardBgText = document.getElementById('cardBgText');
-        const eventTextColor = document.getElementById('eventTextColor');
-        const eventTextText = document.getElementById('eventTextText');
-        const clockColor = document.getElementById('clockColor');
-        const clockText = document.getElementById('clockText');
-        const clockBgColor = document.getElementById('clockBgColor');
-        const clockBgText = document.getElementById('clockBgText');
-        const pageBgColor = document.getElementById('pageBgColor');
-        const pageBgText = document.getElementById('pageBgText');
-        const taskCardColor = document.getElementById('taskCardColor');
-        const taskCardText = document.getElementById('taskCardText');
+        // Global inputs
         const standardTimeCheckbox = document.getElementById('standardTimeCheckbox');
 
         // Event-specific inputs
@@ -846,18 +768,17 @@
                 li.appendChild(actionsDiv);
                 eventList.appendChild(li);
             }
-
-            applyAllStyles();
         }
 
         // --- Settings Modal ---
         function openGlobalSettings() {
             currentEditingEventId = null;
-            modalTitle.textContent = 'Global Styles';
+            modalTitle.textContent = 'Global Settings';
             globalSettingsSection.style.display = 'block';
             eventSettingsSection.style.display = 'none';
             settingsModal.classList.add('open');
-            loadStylesIntoModal();
+            // Load current settings
+            standardTimeCheckbox.checked = useStandardTime;
         }
 
         function openEventSettings(eventId) {
@@ -877,126 +798,13 @@
             hideTimeCheckbox.checked = ev.hideTime || false;
 
             settingsModal.classList.add('open');
-            loadStylesIntoModal();
+            standardTimeCheckbox.checked = useStandardTime;
         }
 
         function closeSettingsModal() {
             settingsModal.classList.remove('open');
             currentEditingEventId = null;
         }
-
-        // --- Load styles into modal ---
-        function loadStylesIntoModal() {
-            const container = document.getElementById('appContainer');
-            const style = getComputedStyle(container);
-            
-            cardBgColor.value = rgbToHex(style.backgroundColor || '#ffffff');
-            cardBgText.value = rgbToHex(style.backgroundColor || '#ffffff');
-
-            const eventText = getComputedStyle(document.querySelector('.event-name') || document.createElement('div')).color || '#0b1e33';
-            const eventTextHex = rgbToHex(eventText);
-            eventTextColor.value = eventTextHex;
-            eventTextText.value = eventTextHex;
-
-            const clock = document.getElementById('realTimeClock');
-            const clockCol = getComputedStyle(clock).color || '#0b1e33';
-            const clockColHex = rgbToHex(clockCol);
-            clockColor.value = clockColHex;
-            clockText.value = clockColHex;
-
-            const clockDisplay = document.getElementById('clockDisplay');
-            const clockBg = getComputedStyle(clockDisplay).backgroundColor || '#f8fafc';
-            const clockBgHex = rgbToHex(clockBg);
-            clockBgColor.value = clockBgHex;
-            clockBgText.value = clockBgHex;
-
-            const pageBg = getComputedStyle(document.body).backgroundColor || '#f2f6fc';
-            const pageBgHex = rgbToHex(pageBg);
-            pageBgColor.value = pageBgHex;
-            pageBgText.value = pageBgHex;
-
-            const firstLi = document.querySelector('.event-list li');
-            if (firstLi) {
-                const taskBg = getComputedStyle(firstLi).backgroundColor || '#ffffff';
-                const taskBgHex = rgbToHex(taskBg);
-                taskCardColor.value = taskBgHex;
-                taskCardText.value = taskBgHex;
-            } else {
-                taskCardColor.value = '#ffffff';
-                taskCardText.value = '#ffffff';
-            }
-
-            standardTimeCheckbox.checked = useStandardTime;
-        }
-
-        function rgbToHex(rgb) {
-            if (!rgb || rgb === '') return '#ffffff';
-            if (rgb.startsWith('#')) return rgb;
-            const match = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
-            if (!match) return '#ffffff';
-            const r = parseInt(match[1], 10);
-            const g = parseInt(match[2], 10);
-            const b = parseInt(match[3], 10);
-            return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
-        }
-
-        // --- Apply styles ---
-        function applyAllStyles() {
-            const cardBg = cardBgColor.value;
-            const eventText = eventTextColor.value;
-            const clockCol = clockColor.value;
-            const clockBg = clockBgColor.value;
-            const pageBg = pageBgColor.value;
-            const taskCard = taskCardColor.value;
-
-            const container = document.getElementById('appContainer');
-            container.style.backgroundColor = cardBg;
-
-            document.querySelectorAll('.event-name').forEach(el => {
-                el.style.color = eventText;
-            });
-            document.getElementById('mainHeading').style.color = eventText;
-            document.getElementById('headingIcon').style.color = eventText;
-
-            document.getElementById('realTimeClock').style.color = clockCol;
-            document.getElementById('clockLabel').style.color = clockCol;
-
-            document.getElementById('clockDisplay').style.backgroundColor = clockBg;
-
-            document.body.style.backgroundColor = pageBg;
-
-            document.querySelectorAll('.event-list li').forEach(el => {
-                el.style.backgroundColor = taskCard;
-            });
-
-            document.getElementById('modalBox').style.backgroundColor = cardBg;
-            document.querySelectorAll('.modal-box .settings-group label, .modal-box .settings-note, .modal-header h2').forEach(el => {
-                el.style.color = eventText;
-            });
-
-            // Update standard time
-            useStandardTime = standardTimeCheckbox.checked;
-            updateClock();
-            renderEvents(); // Re-render to update date formats
-        }
-
-        // --- Sync color inputs ---
-        function syncColorInputs(colorInput, textInput) {
-            colorInput.addEventListener('input', function() {
-                textInput.value = this.value;
-            });
-            textInput.addEventListener('input', function() {
-                if (this.value.startsWith('#') && this.value.length === 7) {
-                    colorInput.value = this.value;
-                }
-            });
-        }
-        syncColorInputs(cardBgColor, cardBgText);
-        syncColorInputs(eventTextColor, eventTextText);
-        syncColorInputs(clockColor, clockText);
-        syncColorInputs(clockBgColor, clockBgText);
-        syncColorInputs(pageBgColor, pageBgText);
-        syncColorInputs(taskCardColor, taskCardText);
 
         // --- Add event ---
         function addEvent() {
@@ -1022,8 +830,9 @@
 
         // --- Save settings ---
         function saveSettings() {
-            // Apply global styles
-            applyAllStyles();
+            // Update global settings
+            useStandardTime = standardTimeCheckbox.checked;
+            updateClock();
 
             // If editing an event, update its data
             if (currentEditingEventId !== null) {
@@ -1032,16 +841,15 @@
                     const newName = eventNameEdit.value.trim();
                     if (newName) ev.name = newName;
                     
+                    // Only set if value exists, otherwise keep null
                     ev.eventDate = eventDateSingle.value || null;
                     ev.startDate = eventStartDate.value || null;
                     ev.endDate = eventEndDate.value || null;
                     ev.hideTime = hideTimeCheckbox.checked;
-
-                    // Logic: If both start and end are set, eventDate is ignored for display
-                    renderEvents();
                 }
             }
 
+            renderEvents();
             closeSettingsModal();
         }
 
@@ -1127,13 +935,33 @@
             addEventBtn.addEventListener('click', addEvent);
             eventNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEvent(); });
 
-            globalSettingsBtn.addEventListener('click', openGlobalSettings);
-            modalCloseBtn.addEventListener('click', closeSettingsModal);
-            settingsModal.addEventListener('click', function(e) {
-                if (e.target === this) closeSettingsModal();
+            // Global settings button - FIXED: properly opens global settings
+            globalSettingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openGlobalSettings();
             });
 
-            saveSettingsBtn.addEventListener('click', saveSettings);
+            // Modal close - FIXED: properly closes modal
+            modalCloseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeSettingsModal();
+            });
+
+            // Click outside modal - FIXED
+            settingsModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettingsModal();
+                }
+            });
+
+            // Save settings - FIXED: properly saves and closes
+            saveSettingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                saveSettings();
+            });
 
             // Standard time checkbox
             standardTimeCheckbox.addEventListener('change', function() {
@@ -1141,12 +969,6 @@
                 updateClock();
                 renderEvents();
             });
-
-            // Load initial styles
-            setTimeout(() => {
-                loadStylesIntoModal();
-                applyAllStyles();
-            }, 50);
         }
 
         init();
