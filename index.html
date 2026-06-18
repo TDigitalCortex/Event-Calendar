@@ -683,24 +683,26 @@
             border-bottom: none;
         }
 
-        /* Event cards - calendar style with overlapping */
+        /* Event cards - expanded to use full width */
         .schedule-event {
             position: absolute;
-            left: 2px;
-            right: 2px;
+            left: 0;
+            right: 0;
             border-radius: 4px;
-            padding: 0.1rem 0.2rem;
+            padding: 0.15rem 0.3rem;
             cursor: pointer;
             transition: all 0.15s ease;
             overflow: visible;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 18px;
+            min-height: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             border-width: 2px;
             border-style: solid;
             z-index: 10;
+            width: 100%;
+            margin: 0;
         }
 
         /* Default colors if no custom color set */
@@ -714,40 +716,16 @@
             border-color: #2563eb;
         }
 
-        /* Overlapping events - show as stacked with visual indicator */
+        /* Overlapping events - show with slight offset */
         .schedule-event.overlap {
-            border-style: dashed;
+            border-style: solid;
             border-width: 2px;
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
         .schedule-event.overlap:hover {
             opacity: 1;
             z-index: 100 !important;
-        }
-
-        /* Overlap indicator badge */
-        .schedule-event .overlap-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #ef4444;
-            color: white;
-            font-size: 0.4rem;
-            padding: 0.05rem 0.3rem;
-            border-radius: 8px;
-            font-weight: 700;
-            line-height: 1.2;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 20;
-            border: 1px solid white;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-
-        .schedule-event .overlap-badge:hover {
-            transform: scale(1.15);
-            background: #dc2626;
         }
 
         /* Highlight on hover */
@@ -1387,13 +1365,6 @@
                 font-size: 0.35rem;
             }
             
-            .schedule-event .overlap-badge {
-                font-size: 0.35rem;
-                top: -5px;
-                right: -5px;
-                padding: 0.05rem 0.25rem;
-            }
-            
             .schedule-date-header .date-header-item {
                 min-height: 35px;
                 padding: 0.15rem 0.2rem;
@@ -1555,13 +1526,6 @@
                 font-size: 0.3rem;
             }
             
-            .schedule-event .overlap-badge {
-                font-size: 0.3rem;
-                top: -4px;
-                right: -4px;
-                padding: 0.05rem 0.2rem;
-            }
-            
             .schedule-date-header .date-header-item {
                 min-height: 30px;
                 padding: 0.1rem 0.15rem;
@@ -1719,16 +1683,6 @@
     </div>
 </div>
 
-<!-- Overlap Selector Popup -->
-<div class="overlap-selector-overlay" id="overlapOverlay"></div>
-<div class="overlap-selector" id="overlapSelector">
-    <button class="close-btn" id="overlapClose">&times;</button>
-    <h3 id="overlapTitle">Select Event</h3>
-    <div id="overlapList">
-        <!-- Overlap items will be rendered here -->
-    </div>
-</div>
-
 <!-- Global Settings Modal -->
 <div class="modal-overlay" id="globalModal">
     <div class="modal-box" id="globalModalBox">
@@ -1864,7 +1818,7 @@
                 <input type="text" id="scheduleColorHex" class="color-hex-input" placeholder="#dbeafe" value="#dbeafe">
                 <button class="reset-color-btn" id="resetScheduleColor"><i class="fas fa-undo"></i> Reset</button>
             </div>
-            <div class="settings-note">Choose a color for this event in the schedule view. Events that overlap will show a badge to select between them.</div>
+            <div class="settings-note">Choose a color for this event in the schedule view.</div>
         </div>
 
         <div class="settings-group">
@@ -1939,13 +1893,6 @@
         const dayPopupClose = document.getElementById('dayPopupClose');
         const dayPopupTitle = document.getElementById('dayPopupTitle');
         const dayPopupContent = document.getElementById('dayPopupContent');
-
-        // Overlap Selector
-        const overlapSelector = document.getElementById('overlapSelector');
-        const overlapOverlay = document.getElementById('overlapOverlay');
-        const overlapClose = document.getElementById('overlapClose');
-        const overlapTitle = document.getElementById('overlapTitle');
-        const overlapList = document.getElementById('overlapList');
 
         // Global color inputs
         const cardBgColor = document.getElementById('cardBgColor');
@@ -2175,36 +2122,6 @@
             } catch (e) {
                 // Ignore errors
             }
-        }
-
-        // --- Show Overlap Selector ---
-        function showOverlapSelector(events, timeStr, dateStr) {
-            overlapTitle.textContent = `Events at ${timeStr} on ${dateStr}`;
-            overlapList.innerHTML = '';
-            
-            events.forEach(ev => {
-                const div = document.createElement('div');
-                div.className = 'overlap-item';
-                const color = ev.scheduleColor || '#2563eb';
-                div.innerHTML = `
-                    <span class="color-dot" style="background:${color};"></span>
-                    <span class="overlap-name">${escapeHtml(ev.name)}</span>
-                    <span class="overlap-time">${getDisplayDate(ev)}</span>
-                `;
-                div.addEventListener('click', function() {
-                    closeOverlapSelector();
-                    openEventSettings(ev.id);
-                });
-                overlapList.appendChild(div);
-            });
-            
-            overlapSelector.classList.add('open');
-            overlapOverlay.classList.add('open');
-        }
-
-        function closeOverlapSelector() {
-            overlapSelector.classList.remove('open');
-            overlapOverlay.classList.remove('open');
         }
 
         // --- Show Day Popup ---
@@ -2503,6 +2420,14 @@
                             const topPercent = (startHour / 24) * 100;
                             const heightPercent = (duration / 24) * 100;
                             
+                            // Calculate offset for overlapping events
+                            let offset = 0;
+                            if (totalInGroup > 1) {
+                                // Stack overlapping events with slight vertical offset
+                                const groupIndex = group.findIndex(item => item.event.id === firstItem.event.id);
+                                offset = (groupIndex / totalInGroup) * 4;
+                            }
+                            
                             if (totalInGroup === 1) {
                                 // Single event - show normally
                                 const ev = group[0].event;
@@ -2523,18 +2448,15 @@
                                 
                                 html += `<div class="schedule-event" 
                                           data-event-id="${ev.id}"
-                                          style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
+                                          style="top: ${topPercent + offset}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
                                           title="${escapeHtml(ev.name)}">
                                     <span class="event-name-small">${escapeHtml(ev.name)}</span>
                                     <span class="event-time-range">${timeDisplay}</span>
                                 </div>`;
                             } else {
-                                // Multiple events - show first one with badge
+                                // Multiple events - show each with offset
                                 const firstEv = group[0].event;
                                 const color = firstEv.scheduleColor || defaultColors[firstEv.id % defaultColors.length] || '#dbeafe';
-                                
-                                // Collect all event IDs in this group
-                                const eventIds = group.map(item => item.event.id);
                                 
                                 // Determine time display for the group
                                 let timeDisplay = '';
@@ -2549,15 +2471,20 @@
                                     timeDisplay = formatTimeDisplay(startTime, useStandardTime);
                                 }
                                 
-                                html += `<div class="schedule-event overlap" 
-                                          data-event-id="${firstEv.id}"
-                                          data-overlap-ids='${JSON.stringify(eventIds)}'
-                                          style="top: ${topPercent}%; height: ${Math.max(heightPercent, 2)}%; background: ${color}; border-color: ${color};"
-                                          title="${escapeHtml(firstEv.name)} + ${totalInGroup - 1} more">
-                                    <span class="event-name-small">${escapeHtml(firstEv.name)}</span>
-                                    <span class="event-time-range">${timeDisplay}</span>
-                                    <span class="overlap-badge">+${totalInGroup - 1}</span>
-                                </div>`;
+                                // Show each event with different colors
+                                group.forEach((item, index) => {
+                                    const ev = item.event;
+                                    const evColor = ev.scheduleColor || defaultColors[ev.id % defaultColors.length] || '#dbeafe';
+                                    const offsetAmount = (index / totalInGroup) * 4;
+                                    
+                                    html += `<div class="schedule-event overlap" 
+                                              data-event-id="${ev.id}"
+                                              style="top: ${topPercent + offsetAmount}%; height: ${Math.max(heightPercent / totalInGroup, 2)}%; background: ${evColor}; border-color: ${evColor};"
+                                              title="${escapeHtml(ev.name)}">
+                                        <span class="event-name-small">${escapeHtml(ev.name)}</span>
+                                        <span class="event-time-range">${timeDisplay}</span>
+                                    </div>`;
+                                });
                             }
                         }
                     });
@@ -2573,24 +2500,7 @@
                 el.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const eventId = parseInt(this.dataset.eventId);
-                    
-                    // Check if this event has overlap data
-                    const overlapIds = this.dataset.overlapIds;
-                    if (overlapIds) {
-                        // This event has overlapping events
-                        const ids = JSON.parse(overlapIds);
-                        const dateStr = this.closest('.schedule-day-grid').dataset.date;
-                        const date = new Date(dateStr);
-                        const allEvents = ids.map(id => events.find(e => e.id === id)).filter(e => e);
-                        
-                        // Get the time string for display
-                        const timeStr = this.querySelector('.event-time-range')?.textContent?.trim() || 'this time';
-                        const displayDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                        
-                        showOverlapSelector(allEvents, timeStr, displayDate);
-                    } else {
-                        openEventSettings(eventId);
-                    }
+                    openEventSettings(eventId);
                 });
             });
             
@@ -3446,10 +3356,6 @@
 
             setupAmPmShortcuts();
             syncScheduleColor();
-
-            // Overlap selector close handlers
-            overlapClose.addEventListener('click', closeOverlapSelector);
-            overlapOverlay.addEventListener('click', closeOverlapSelector);
 
             // Event listeners
             addEventBtn.addEventListener('click', addEvent);
