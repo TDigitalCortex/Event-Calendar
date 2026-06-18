@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Clock · Style Editor</title>
+    <title>Event Clock · Global & Event Settings</title>
     <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -54,7 +54,7 @@
             border-radius: 60px;
             padding: 1.8rem 1rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             border: 1px solid #e9edf2;
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
             transition: background 0.2s, border-color 0.2s;
@@ -77,6 +77,36 @@
             margin-top: 0.25rem;
             transition: color 0.2s;
         }
+
+        /* --- Global Settings Button --- */
+        .global-settings-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .global-settings-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .global-settings-btn:hover {
+            background: #e2e8f0;
+            transform: scale(1.02);
+        }
+
+        .global-settings-btn i { color: #2563eb; }
 
         /* --- Event Section --- */
         .event-section { margin-top: 0.8rem; }
@@ -272,7 +302,7 @@
         .modal-box {
             background: white;
             border-radius: 32px;
-            max-width: 480px;
+            max-width: 520px;
             width: 92%;
             padding: 1.8rem 2rem 2rem;
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5);
@@ -345,7 +375,8 @@
             background: white;
         }
 
-        .settings-group input[type="text"] {
+        .settings-group input[type="text"],
+        .settings-group input[type="datetime-local"] {
             flex: 1;
             padding: 0.5rem 1rem;
             border-radius: 30px;
@@ -355,7 +386,8 @@
             min-width: 140px;
         }
 
-        .settings-group input[type="text"]:focus {
+        .settings-group input[type="text"]:focus,
+        .settings-group input[type="datetime-local"]:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 3px #2563eb30;
         }
@@ -414,13 +446,20 @@
 
 <div class="clock-card" id="appContainer">
     <h1 id="mainHeading">
-        <i class="fas fa-clock" id="headingIcon"></i> Event Clock · Style Editor
+        <i class="fas fa-clock" id="headingIcon"></i> Event Clock · Settings
     </h1>
 
     <!-- Real-time Clock -->
     <div class="clock-display" id="clockDisplay">
         <div id="realTimeClock">--:--:--</div>
         <div class="clock-label" id="clockLabel"><i class="far fa-calendar-alt"></i> current time</div>
+    </div>
+
+    <!-- Global Settings Button -->
+    <div class="global-settings-area">
+        <button class="global-settings-btn" id="globalSettingsBtn">
+            <i class="fas fa-palette"></i> Global Styles
+        </button>
     </div>
 
     <!-- Event Management -->
@@ -442,69 +481,91 @@
     </div>
 
     <div class="footer-credit" id="footerCredit">
-        <i class="fas fa-palette"></i> Click <i class="fas fa-cog"></i> on any event to style
+        <i class="fas fa-cog"></i> Click <i class="fas fa-cog"></i> on any event for date settings
     </div>
 </div>
 
-<!-- Settings Modal (popup) -->
+<!-- Settings Modal (shared for Global & Event) -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-box" id="modalBox">
         <div class="modal-header">
-            <h2><i class="fas fa-palette"></i> <span id="modalEventName">Event</span> Settings</h2>
+            <h2><i class="fas fa-palette"></i> <span id="modalTitle">Global Styles</span></h2>
             <button class="modal-close" id="modalCloseBtn">&times;</button>
         </div>
 
-        <!-- Style controls -->
-        <div class="settings-group">
-            <label>Card Background</label>
-            <div class="color-row">
-                <input type="color" id="cardBgColor" value="#ffffff">
-                <input type="text" id="cardBgText" value="#ffffff" placeholder="#hex">
+        <!-- Global Styles (always visible) -->
+        <div id="globalSettingsSection">
+            <div class="settings-group">
+                <label>Card Background</label>
+                <div class="color-row">
+                    <input type="color" id="cardBgColor" value="#ffffff">
+                    <input type="text" id="cardBgText" value="#ffffff" placeholder="#hex">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Event Text Color</label>
+                <div class="color-row">
+                    <input type="color" id="eventTextColor" value="#0b1e33">
+                    <input type="text" id="eventTextText" value="#0b1e33" placeholder="#hex">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Clock Time Color</label>
+                <div class="color-row">
+                    <input type="color" id="clockColor" value="#0b1e33">
+                    <input type="text" id="clockText" value="#0b1e33" placeholder="#hex">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Clock Background</label>
+                <div class="color-row">
+                    <input type="color" id="clockBgColor" value="#f8fafc">
+                    <input type="text" id="clockBgText" value="#f8fafc" placeholder="#hex">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Page Background</label>
+                <div class="color-row">
+                    <input type="color" id="pageBgColor" value="#f2f6fc">
+                    <input type="text" id="pageBgText" value="#f2f6fc" placeholder="#hex">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Task Card Color (event items)</label>
+                <div class="color-row">
+                    <input type="color" id="taskCardColor" value="#ffffff">
+                    <input type="text" id="taskCardText" value="#ffffff" placeholder="#hex">
+                </div>
             </div>
         </div>
 
-        <div class="settings-group">
-            <label>Event Text Color</label>
-            <div class="color-row">
-                <input type="color" id="eventTextColor" value="#0b1e33">
-                <input type="text" id="eventTextText" value="#0b1e33" placeholder="#hex">
+        <!-- Event-specific Settings (shown when editing an event) -->
+        <div id="eventSettingsSection" style="display: none;">
+            <div class="settings-group">
+                <label>Event Name</label>
+                <input type="text" id="eventNameEdit" placeholder="Event name">
+            </div>
+
+            <div class="settings-group">
+                <label>Event Date & Time</label>
+                <input type="datetime-local" id="eventDateTime">
+                <div class="settings-note">Set the date and time for this event.</div>
+            </div>
+
+            <div class="settings-group">
+                <label>Created At (read-only)</label>
+                <input type="text" id="eventCreatedAt" readonly style="background:#f1f5f9; cursor:default;">
+                <div class="settings-note">This is when the event was originally created.</div>
             </div>
         </div>
 
-        <div class="settings-group">
-            <label>Clock Time Color</label>
-            <div class="color-row">
-                <input type="color" id="clockColor" value="#0b1e33">
-                <input type="text" id="clockText" value="#0b1e33" placeholder="#hex">
-            </div>
-        </div>
-
-        <div class="settings-group">
-            <label>Clock Background</label>
-            <div class="color-row">
-                <input type="color" id="clockBgColor" value="#f8fafc">
-                <input type="text" id="clockBgText" value="#f8fafc" placeholder="#hex">
-            </div>
-        </div>
-
-        <div class="settings-group">
-            <label>Page Background</label>
-            <div class="color-row">
-                <input type="color" id="pageBgColor" value="#f2f6fc">
-                <input type="text" id="pageBgText" value="#f2f6fc" placeholder="#hex">
-            </div>
-        </div>
-
-        <div class="settings-group">
-            <label>Task Card Color (event items)</label>
-            <div class="color-row">
-                <input type="color" id="taskCardColor" value="#ffffff">
-                <input type="text" id="taskCardText" value="#ffffff" placeholder="#hex">
-            </div>
-        </div>
-
-        <button class="save-settings-btn" id="saveSettingsBtn"><i class="fas fa-save"></i> Apply Styles</button>
-        <div class="settings-note" style="margin-top:0.8rem;">Changes apply immediately to the main view.</div>
+        <button class="save-settings-btn" id="saveSettingsBtn"><i class="fas fa-save"></i> Apply Settings</button>
+        <div class="settings-note" style="margin-top:0.8rem;">Global styles apply to the whole page. Event settings update the selected event.</div>
     </div>
 </div>
 
@@ -525,10 +586,13 @@
         // Modal refs
         const settingsModal = document.getElementById('settingsModal');
         const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalEventName = document.getElementById('modalEventName');
+        const modalTitle = document.getElementById('modalTitle');
+        const globalSettingsSection = document.getElementById('globalSettingsSection');
+        const eventSettingsSection = document.getElementById('eventSettingsSection');
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const globalSettingsBtn = document.getElementById('globalSettingsBtn');
 
-        // Color inputs
+        // Global color inputs
         const cardBgColor = document.getElementById('cardBgColor');
         const cardBgText = document.getElementById('cardBgText');
         const eventTextColor = document.getElementById('eventTextColor');
@@ -542,11 +606,16 @@
         const taskCardColor = document.getElementById('taskCardColor');
         const taskCardText = document.getElementById('taskCardText');
 
+        // Event-specific inputs
+        const eventNameEdit = document.getElementById('eventNameEdit');
+        const eventDateTime = document.getElementById('eventDateTime');
+        const eventCreatedAt = document.getElementById('eventCreatedAt');
+
         // --- State ---
         let events = [];
         let nextId = 1;
         let currentTab = 'active';
-        let currentEditingEventId = null; // for settings
+        let currentEditingEventId = null; // null = global settings mode
 
         // --- Real-time clock ---
         function updateClock() {
@@ -568,6 +637,16 @@
 
         function getNowISO() {
             return new Date().toLocaleString('en-US', { hour12: false });
+        }
+
+        function getNowDateTimeLocal() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
         // --- Render events ---
@@ -611,7 +690,9 @@
                 timeSpan.textContent = `⏱ ${formatTime(ev.durationSeconds || 0)}`;
                 const dateSpan = document.createElement('span');
                 dateSpan.className = 'event-date';
-                dateSpan.textContent = `📅 ${ev.createdAt || 'now'}`;
+                // Show custom date if set, otherwise creation date
+                const displayDate = ev.customDate ? new Date(ev.customDate).toLocaleString('en-US', { hour12: false }) : (ev.createdAt || 'now');
+                dateSpan.textContent = `📅 ${displayDate}`;
                 metaSpan.appendChild(timeSpan);
                 metaSpan.appendChild(dateSpan);
 
@@ -619,14 +700,14 @@
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'event-actions';
 
-                // Settings (cog) - opens modal
+                // Settings (cog) - opens modal for event
                 const settingsBtn = document.createElement('button');
                 settingsBtn.className = 'settings-btn';
                 settingsBtn.innerHTML = '<i class="fas fa-cog"></i>';
-                settingsBtn.title = 'Settings';
+                settingsBtn.title = 'Event Settings';
                 settingsBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    openSettingsForEvent(ev.id);
+                    openEventSettings(ev.id);
                 });
 
                 // Hide / Restore
@@ -659,7 +740,6 @@
                     deleteBtn.title = 'Permanently erase';
                     deleteBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        // No confirmation – erase immediately
                         events = events.filter(e => e.id !== ev.id);
                         renderEvents();
                     });
@@ -683,18 +763,45 @@
                 eventList.appendChild(li);
             }
 
-            // Apply current styles to all items (refresh)
+            // Apply current styles to all items
             applyAllStyles();
         }
 
         // --- Settings Modal ---
-        function openSettingsForEvent(eventId) {
+        function openGlobalSettings() {
+            currentEditingEventId = null;
+            modalTitle.textContent = 'Global Styles';
+            globalSettingsSection.style.display = 'block';
+            eventSettingsSection.style.display = 'none';
+            settingsModal.classList.add('open');
+            loadStylesIntoModal();
+        }
+
+        function openEventSettings(eventId) {
             const ev = events.find(e => e.id === eventId);
             if (!ev) return;
             currentEditingEventId = eventId;
-            modalEventName.textContent = `"${ev.name}"`;
+            modalTitle.textContent = `Event: "${ev.name}"`;
+            globalSettingsSection.style.display = 'block'; // Keep global styles visible
+            eventSettingsSection.style.display = 'block';
+
+            // Populate event fields
+            eventNameEdit.value = ev.name;
+            // Set datetime-local value if customDate exists, otherwise use current time
+            if (ev.customDate) {
+                const date = new Date(ev.customDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                eventDateTime.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            } else {
+                eventDateTime.value = getNowDateTimeLocal();
+            }
+            eventCreatedAt.value = ev.createdAt || 'Unknown';
+
             settingsModal.classList.add('open');
-            // Load current styles into modal inputs (from the actual DOM)
             loadStylesIntoModal();
         }
 
@@ -734,7 +841,6 @@
             pageBgColor.value = pageBgHex;
             pageBgText.value = pageBgHex;
 
-            // Task card color: from first event li
             const firstLi = document.querySelector('.event-list li');
             if (firstLi) {
                 const taskBg = getComputedStyle(firstLi).backgroundColor || '#ffffff';
@@ -747,10 +853,8 @@
             }
         }
 
-        // Simple RGB to HEX converter
         function rgbToHex(rgb) {
             if (!rgb || rgb === '') return '#ffffff';
-            // Check if it's already hex
             if (rgb.startsWith('#')) return rgb;
             const match = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
             if (!match) return '#ffffff';
@@ -769,42 +873,33 @@
             const pageBg = pageBgColor.value;
             const taskCard = taskCardColor.value;
 
-            // App card
             const container = document.getElementById('appContainer');
             container.style.backgroundColor = cardBg;
 
-            // Event text color (all event names)
             document.querySelectorAll('.event-name').forEach(el => {
                 el.style.color = eventText;
             });
-            // Also heading and icons (optional)
             document.getElementById('mainHeading').style.color = eventText;
             document.getElementById('headingIcon').style.color = eventText;
 
-            // Clock color
             document.getElementById('realTimeClock').style.color = clockCol;
             document.getElementById('clockLabel').style.color = clockCol;
 
-            // Clock background
             document.getElementById('clockDisplay').style.backgroundColor = clockBg;
 
-            // Page background
             document.body.style.backgroundColor = pageBg;
 
-            // Task card color (event items)
             document.querySelectorAll('.event-list li').forEach(el => {
                 el.style.backgroundColor = taskCard;
             });
 
-            // Also update the modal box background to match card for consistency
             document.getElementById('modalBox').style.backgroundColor = cardBg;
-            // Modal text color
             document.querySelectorAll('.modal-box .settings-group label, .modal-box .settings-note, .modal-header h2').forEach(el => {
                 el.style.color = eventText;
             });
         }
 
-        // --- Sync text inputs with color pickers ---
+        // --- Sync color inputs ---
         function syncColorInputs(colorInput, textInput) {
             colorInput.addEventListener('input', function() {
                 textInput.value = this.value;
@@ -835,11 +930,37 @@
                 name: name,
                 status: 'active',
                 durationSeconds: durationSec,
-                createdAt: now.toLocaleString('en-US', { hour12: false })
+                createdAt: now.toLocaleString('en-US', { hour12: false }),
+                customDate: null // will be set via event settings
             });
 
             eventNameInput.value = '';
             renderEvents();
+        }
+
+        // --- Save settings (global + event) ---
+        function saveSettings() {
+            // Apply global styles
+            applyAllStyles();
+
+            // If editing an event, update its data
+            if (currentEditingEventId !== null) {
+                const ev = events.find(e => e.id === currentEditingEventId);
+                if (ev) {
+                    const newName = eventNameEdit.value.trim();
+                    if (newName) {
+                        ev.name = newName;
+                    }
+                    // Update custom date
+                    if (eventDateTime.value) {
+                        ev.customDate = eventDateTime.value;
+                    }
+                    // Re-render to show updated name and date
+                    renderEvents();
+                }
+            }
+
+            closeSettingsModal();
         }
 
         // --- Escape ---
@@ -864,12 +985,44 @@
 
         // --- Init ---
         function init() {
-            // sample events
+            // Sample events with custom dates
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
             events = [
-                { id: nextId++, name: 'Morning standup', status: 'active', durationSeconds: 900, createdAt: getNowISO() },
-                { id: nextId++, name: 'Code review', status: 'active', durationSeconds: 1800, createdAt: getNowISO() },
-                { id: nextId++, name: 'Design sync', status: 'hidden', durationSeconds: 1200, createdAt: getNowISO() },
-                { id: nextId++, name: 'Old task', status: 'deleted', durationSeconds: 600, createdAt: getNowISO() },
+                { 
+                    id: nextId++, 
+                    name: 'Morning standup', 
+                    status: 'active', 
+                    durationSeconds: 900, 
+                    createdAt: now.toLocaleString('en-US', { hour12: false }),
+                    customDate: now.toISOString()
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Code review', 
+                    status: 'active', 
+                    durationSeconds: 1800, 
+                    createdAt: now.toLocaleString('en-US', { hour12: false }),
+                    customDate: null
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Design sync', 
+                    status: 'hidden', 
+                    durationSeconds: 1200, 
+                    createdAt: yesterday.toLocaleString('en-US', { hour12: false }),
+                    customDate: yesterday.toISOString()
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Old task', 
+                    status: 'deleted', 
+                    durationSeconds: 600, 
+                    createdAt: yesterday.toLocaleString('en-US', { hour12: false }),
+                    customDate: null
+                },
             ];
             const maxId = events.reduce((max, e) => Math.max(max, e.id), 0);
             nextId = maxId + 1;
@@ -881,6 +1034,9 @@
             addEventBtn.addEventListener('click', addEvent);
             eventNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEvent(); });
 
+            // Global settings button
+            globalSettingsBtn.addEventListener('click', openGlobalSettings);
+
             // Modal close
             modalCloseBtn.addEventListener('click', closeSettingsModal);
             settingsModal.addEventListener('click', function(e) {
@@ -888,15 +1044,9 @@
             });
 
             // Save settings
-            saveSettingsBtn.addEventListener('click', function() {
-                applyAllStyles();
-                // Also update any event meta colors (time/date) – we set them in applyAllStyles
-                // Update event-time and event-date background to match card? We'll keep as is.
-                // Optionally close modal
-                closeSettingsModal();
-            });
+            saveSettingsBtn.addEventListener('click', saveSettings);
 
-            // Apply initial styles (load from defaults)
+            // Apply initial styles
             setTimeout(() => {
                 loadStylesIntoModal();
                 applyAllStyles();
