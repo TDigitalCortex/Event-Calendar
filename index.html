@@ -2239,7 +2239,8 @@
             html += `<div class="schedule-time-column">`;
             // Add a spacer div at the top to align with the date header
             html += `<div class="schedule-time-spacer"></div>`;
-            for (let hour = 1; hour < 24; hour++) {
+            // Start from 00:00 (midnight)
+            for (let hour = 0; hour < 24; hour++) {
                 const timeLabel = useStandardTime ? 
                     `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}` :
                     `${String(hour).padStart(2, '0')}:00`;
@@ -2271,8 +2272,8 @@
                     </div>
                     <div class="schedule-day-grid" data-date="${date.toISOString()}">`;
                 
-                // Add hour slots - starting from 1:00 to align with time column
-                for (let hour = 1; hour < 24; hour++) {
+                // Add hour slots - starting from 00:00
+                for (let hour = 0; hour < 24; hour++) {
                     html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
                 }
                 
@@ -2307,7 +2308,7 @@
                         const duration = endHour - startHour;
                         
                         if (duration > 0) {
-                            const topPercent = ((startHour) / 24) * 100;
+                            const topPercent = (startHour / 24) * 100;
                             const heightPercent = (duration / 24) * 100;
                             
                             if (totalInGroup === 1) {
