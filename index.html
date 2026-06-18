@@ -471,34 +471,72 @@
             text-decoration: underline;
         }
 
-        /* --- Schedule View (Week) --- */
+        /* --- Schedule View (Week with Timeline) --- */
         .schedule-view {
             display: none;
             margin-top: 1rem;
+            overflow-x: auto;
         }
 
         .schedule-view.visible {
             display: block;
         }
 
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
+        .schedule-container {
+            display: flex;
             gap: 0.3rem;
             background: #f8fafc;
             border-radius: 24px;
             padding: 0.5rem;
+            min-width: 700px;
+        }
+
+        .schedule-time-column {
+            flex: 0 0 60px;
+            min-width: 60px;
+            background: white;
+            border-radius: 16px;
+            padding: 0.3rem 0.2rem;
+            border: 1px solid #e9edf2;
+        }
+
+        .schedule-time-slot {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #64748b;
+            border-bottom: 1px solid #f1f5f9;
+            font-weight: 500;
+        }
+
+        .schedule-time-slot:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-day-column {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 0.3rem;
+            border: 1px solid #e9edf2;
+            min-width: 80px;
+        }
+
+        .schedule-day-column.today-column {
+            border-color: #2563eb;
+            background: #eff6ff;
         }
 
         .schedule-day-header {
             text-align: center;
             font-weight: 600;
             color: #64748b;
-            font-size: 0.8rem;
-            padding: 0.5rem 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            padding: 0.3rem 0;
             border-bottom: 2px solid #e9edf2;
+            margin-bottom: 0.3rem;
         }
 
         .schedule-day-header.today-header {
@@ -506,56 +544,68 @@
             border-bottom-color: #2563eb;
         }
 
-        .schedule-day {
-            background: white;
-            border-radius: 16px;
-            padding: 0.5rem;
-            min-height: 120px;
-            border: 1px solid #e9edf2;
-            transition: 0.15s;
+        .schedule-day-header .day-number {
+            font-size: 0.9rem;
+            display: block;
+            font-weight: 700;
         }
 
-        .schedule-day.today-schedule {
-            border-color: #2563eb;
-            background: #eff6ff;
+        .schedule-day-grid {
+            position: relative;
+            min-height: 720px;
         }
 
-        .schedule-day .day-number {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #0b1e33;
-            padding: 0 0.3rem 0.3rem;
-            border-bottom: 1px solid #e9edf2;
-            margin-bottom: 0.3rem;
+        .schedule-hour-slot {
+            height: 60px;
+            border-bottom: 1px solid #f1f5f9;
+            position: relative;
         }
 
-        .schedule-day .day-events {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
+        .schedule-hour-slot:last-child {
+            border-bottom: none;
         }
 
-        .schedule-day .day-events .cal-event {
-            font-size: 0.7rem;
+        .schedule-event {
+            position: absolute;
+            left: 2px;
+            right: 2px;
             background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 6px;
+            padding: 0.15rem 0.3rem;
+            font-size: 0.6rem;
             color: #1e40af;
-            padding: 0.15rem 0.4rem;
-            border-radius: 8px;
             cursor: pointer;
             transition: 0.1s;
-            border: 1px solid transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            z-index: 10;
+            min-height: 18px;
         }
 
-        .schedule-day .day-events .cal-event:hover {
+        .schedule-event:hover {
             background: #bfdbfe;
             border-color: #2563eb;
+            z-index: 20;
         }
 
-        .schedule-day .no-events {
-            font-size: 0.65rem;
-            color: #94a3b8;
+        .schedule-event .event-time {
+            font-size: 0.5rem;
+            opacity: 0.7;
+            display: block;
+        }
+
+        .schedule-event .event-name-small {
+            font-weight: 500;
+            display: block;
+        }
+
+        .schedule-empty {
             text-align: center;
-            padding: 0.5rem 0;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            padding: 1rem 0;
         }
 
         /* --- Day Events Popup --- */
@@ -838,20 +888,20 @@
         /* scroll */
         .event-list::-webkit-scrollbar,
         .calendar-day .day-events::-webkit-scrollbar,
-        .schedule-day .day-events::-webkit-scrollbar,
+        .schedule-day-grid::-webkit-scrollbar,
         .day-popup-box::-webkit-scrollbar {
             width: 4px;
         }
         .event-list::-webkit-scrollbar-track,
         .calendar-day .day-events::-webkit-scrollbar-track,
-        .schedule-day .day-events::-webkit-scrollbar-track,
+        .schedule-day-grid::-webkit-scrollbar-track,
         .day-popup-box::-webkit-scrollbar-track {
             background: #e2e8f0;
             border-radius: 20px;
         }
         .event-list::-webkit-scrollbar-thumb,
         .calendar-day .day-events::-webkit-scrollbar-thumb,
-        .schedule-day .day-events::-webkit-scrollbar-thumb,
+        .schedule-day-grid::-webkit-scrollbar-thumb,
         .day-popup-box::-webkit-scrollbar-thumb {
             background: #b9c7da;
             border-radius: 20px;
@@ -871,10 +921,12 @@
             .calendar-day { min-height: 60px; padding: 0.3rem 0.15rem; }
             .calendar-day .day-number { font-size: 0.7rem; }
             .calendar-day .day-events .cal-event { font-size: 0.5rem; }
-            .schedule-grid { gap: 0.15rem; padding: 0.3rem; }
-            .schedule-day { min-height: 80px; padding: 0.3rem; }
-            .schedule-day .day-number { font-size: 0.7rem; }
-            .schedule-day .day-events .cal-event { font-size: 0.6rem; }
+            .schedule-container { min-width: 500px; }
+            .schedule-time-column { flex: 0 0 40px; min-width: 40px; }
+            .schedule-time-slot { height: 40px; font-size: 0.6rem; }
+            .schedule-day-grid { min-height: 480px; }
+            .schedule-hour-slot { height: 40px; }
+            .schedule-event { font-size: 0.5rem; min-height: 14px; }
             .date-input-wrapper { flex-direction: column; align-items: stretch; }
             .clear-date-btn { justify-content: center; }
             .view-toggle-area { flex-wrap: wrap; }
@@ -955,7 +1007,7 @@
                 <button class="calendar-nav-btn" id="scheduleNextDay"><i class="fas fa-chevron-right"></i></button>
                 <button class="calendar-nav-btn" id="scheduleNextWeek"><i class="fas fa-chevron-double-right"></i></button>
             </div>
-            <div class="schedule-grid" id="scheduleGrid">
+            <div class="schedule-container" id="scheduleContainer">
                 <!-- Schedule will be rendered here -->
             </div>
         </div>
@@ -1145,7 +1197,7 @@
         const monthViewBtn = document.getElementById('monthViewBtn');
         const scheduleViewBtn = document.getElementById('scheduleViewBtn');
         const calendarGrid = document.getElementById('calendarGrid');
-        const scheduleGrid = document.getElementById('scheduleGrid');
+        const scheduleContainer = document.getElementById('scheduleContainer');
         const calendarTitle = document.getElementById('calendarTitle');
         const scheduleTitle = document.getElementById('scheduleTitle');
         const calendarPrevMonth = document.getElementById('calendarPrevMonth');
@@ -1197,10 +1249,10 @@
         let currentTab = 'active';
         let currentEditingEventId = null;
         let useStandardTime = false;
-        let calendarDate = new Date(); // current month/year for calendar
-        let scheduleDate = new Date(); // current day for schedule view
+        let calendarDate = new Date();
+        let scheduleDate = new Date();
         let isCalendarView = false;
-        let currentView = 'month'; // 'month' or 'schedule'
+        let currentView = 'month';
 
         // --- Real-time clock ---
         function updateClock() {
@@ -1265,12 +1317,10 @@
             const dateStr = date.toISOString().split('T')[0];
             return events.filter(ev => {
                 if (ev.status !== 'active') return false;
-                // Check eventDate
                 if (ev.eventDate) {
                     const evDate = new Date(ev.eventDate);
                     if (evDate.toISOString().split('T')[0] === dateStr) return true;
                 }
-                // Check date range
                 if (ev.startDate && ev.endDate) {
                     const start = new Date(ev.startDate);
                     const end = new Date(ev.endDate);
@@ -1386,7 +1436,6 @@
 
             calendarGrid.innerHTML = html;
 
-            // Add click listeners
             document.querySelectorAll('.cal-event[data-event-id]').forEach(el => {
                 el.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1405,10 +1454,8 @@
                 });
             });
 
-            // Click on day to show all events
             document.querySelectorAll('.calendar-day').forEach(el => {
                 el.addEventListener('click', function(e) {
-                    // Don't trigger if clicking on an event
                     if (e.target.closest('.cal-event')) return;
                     const dateStr = this.dataset.date;
                     if (dateStr) {
@@ -1422,7 +1469,7 @@
             });
         }
 
-        // --- Render Schedule (Week) View ---
+        // --- Render Schedule (Week with Timeline) ---
         function renderSchedule() {
             const startOfWeek = new Date(scheduleDate);
             startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
@@ -1433,58 +1480,120 @@
             scheduleTitle.textContent = `Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
             const today = new Date();
+            
+            // Build schedule HTML
             let html = '';
             
-            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            
-            // Headers
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(startOfWeek);
-                date.setDate(date.getDate() + i);
-                const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
-                html += `<div class="schedule-day-header${isToday ? ' today-header' : ''}">
-                    ${dayHeaders[i]}<br>
-                    <span style="font-weight:400; font-size:0.7rem;">${date.getDate()}</span>
-                </div>`;
+            // Time column
+            html += `<div class="schedule-time-column">`;
+            for (let hour = 0; hour < 24; hour++) {
+                const timeLabel = useStandardTime ? 
+                    `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}` :
+                    `${String(hour).padStart(2, '0')}:00`;
+                html += `<div class="schedule-time-slot">${timeLabel}</div>`;
             }
+            html += `</div>`;
             
-            // Day cells
+            // Day columns
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             for (let i = 0; i < 7; i++) {
                 const date = new Date(startOfWeek);
                 date.setDate(date.getDate() + i);
                 const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
                 const dayEvents = getEventsForDate(date);
                 
-                html += `<div class="schedule-day${isToday ? ' today-schedule' : ''}" data-date="${date.toISOString()}">
-                    <div class="day-number">${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                    <div class="day-events">`;
+                html += `<div class="schedule-day-column${isToday ? ' today-column' : ''}">
+                    <div class="schedule-day-header${isToday ? ' today-header' : ''}">
+                        ${dayNames[i]}
+                        <span class="day-number">${date.getDate()}</span>
+                    </div>
+                    <div class="schedule-day-grid" data-date="${date.toISOString()}">`;
                 
+                // Add hour slots
+                for (let hour = 0; hour < 24; hour++) {
+                    html += `<div class="schedule-hour-slot" data-hour="${hour}"></div>`;
+                }
+                
+                // Add events positioned by time
+                dayEvents.forEach(ev => {
+                    let startTime = null;
+                    let endTime = null;
+                    let eventDate = null;
+                    
+                    // Determine the event time
+                    if (ev.eventDate) {
+                        const d = new Date(ev.eventDate);
+                        if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
+                            startTime = d.getHours() + d.getMinutes() / 60;
+                            endTime = startTime + 1; // Default 1 hour duration
+                            eventDate = d;
+                        }
+                    } else if (ev.startDate && ev.endDate) {
+                        const start = new Date(ev.startDate);
+                        const end = new Date(ev.endDate);
+                        const checkDate = new Date(date);
+                        checkDate.setHours(0,0,0,0);
+                        const startDate = new Date(start);
+                        startDate.setHours(0,0,0,0);
+                        const endDate = new Date(end);
+                        endDate.setHours(0,0,0,0);
+                        
+                        if (checkDate >= startDate && checkDate <= endDate) {
+                            // If it's a multi-day event, show it across the range
+                            const startHour = start.getHours() + start.getMinutes() / 60;
+                            const endHour = end.getHours() + end.getMinutes() / 60;
+                            if (checkDate.getTime() === startDate.getTime()) {
+                                startTime = startHour;
+                            } else {
+                                startTime = 0;
+                            }
+                            if (checkDate.getTime() === endDate.getTime()) {
+                                endTime = endHour;
+                            } else {
+                                endTime = 24;
+                            }
+                            eventDate = date;
+                        }
+                    }
+                    
+                    if (startTime !== null && endTime !== null && eventDate) {
+                        // Calculate position and height
+                        const topPercent = (startTime / 24) * 100;
+                        const heightPercent = ((endTime - startTime) / 24) * 100;
+                        const timeStr = formatDate(eventDate.toISOString(), false, useStandardTime);
+                        
+                        html += `<div class="schedule-event" 
+                                  data-event-id="${ev.id}"
+                                  style="top: ${topPercent}%; height: ${Math.max(heightPercent, 3)}%;">
+                            <span class="event-name-small">${escapeHtml(ev.name)}</span>
+                            <span class="event-time">${timeStr}</span>
+                        </div>`;
+                    }
+                });
+                
+                // Add empty message if no events
                 if (dayEvents.length === 0) {
-                    html += `<div class="no-events">No events</div>`;
-                } else {
-                    dayEvents.forEach(ev => {
-                        html += `<div class="cal-event" title="${escapeHtml(ev.name)}" data-event-id="${ev.id}">${escapeHtml(ev.name)}</div>`;
-                    });
+                    html += `<div class="schedule-empty">No events</div>`;
                 }
                 
                 html += `</div></div>`;
             }
-
-            scheduleGrid.innerHTML = html;
-
+            
+            scheduleContainer.innerHTML = html;
+            
             // Add click listeners for events
-            document.querySelectorAll('#scheduleGrid .cal-event[data-event-id]').forEach(el => {
+            document.querySelectorAll('#scheduleContainer .schedule-event[data-event-id]').forEach(el => {
                 el.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const eventId = parseInt(this.dataset.eventId);
                     openEventSettings(eventId);
                 });
             });
-
+            
             // Click on day to show all events
-            document.querySelectorAll('.schedule-day').forEach(el => {
+            document.querySelectorAll('.schedule-day-grid').forEach(el => {
                 el.addEventListener('click', function(e) {
-                    if (e.target.closest('.cal-event')) return;
+                    if (e.target.closest('.schedule-event')) return;
                     const dateStr = this.dataset.date;
                     if (dateStr) {
                         const date = new Date(dateStr);
@@ -1758,21 +1867,16 @@
 
             document.body.style.backgroundColor = pageBg;
 
-            document.querySelectorAll('.event-list li').forEach(el => {
+            document.querySelectorAll('.event-list li, .calendar-day, .schedule-day-column, .schedule-time-column').forEach(el => {
                 el.style.backgroundColor = taskCard;
+            });
+            document.querySelectorAll('.calendar-day.today, .schedule-day-column.today-column').forEach(el => {
+                el.style.backgroundColor = '#eff6ff';
             });
 
             document.getElementById('globalModalBox').style.backgroundColor = cardBg;
             document.querySelectorAll('.modal-box .settings-group label, .modal-box .settings-note, .modal-header h2').forEach(el => {
                 el.style.color = eventText;
-            });
-
-            // Also apply to calendar elements
-            document.querySelectorAll('.calendar-day, .schedule-day').forEach(el => {
-                el.style.backgroundColor = taskCard;
-            });
-            document.querySelectorAll('.calendar-day.today, .schedule-day.today-schedule').forEach(el => {
-                el.style.backgroundColor = '#eff6ff';
             });
         }
 
@@ -1877,13 +1981,35 @@
             const twoWeeksFromNow = new Date();
             twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
 
+            // Create events with specific times
+            const meetingTime = new Date();
+            meetingTime.setHours(10, 0, 0, 0);
+            const lunchTime = new Date();
+            lunchTime.setHours(12, 30, 0, 0);
+            const afternoonMeeting = new Date();
+            afternoonMeeting.setHours(14, 0, 0, 0);
+            const workshopStart = new Date();
+            workshopStart.setHours(9, 0, 0, 0);
+            const workshopEnd = new Date();
+            workshopEnd.setHours(11, 0, 0, 0);
+
             events = [
                 { 
                     id: nextId++, 
                     name: 'Team Meeting', 
                     status: 'active', 
                     createdAt: now,
-                    eventDate: now,
+                    eventDate: meetingTime.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Lunch Break', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: lunchTime.toISOString(),
                     startDate: null,
                     endDate: null,
                     hideTime: false
@@ -1926,6 +2052,16 @@
                     eventDate: twoWeeksFromNow.toISOString(),
                     startDate: null,
                     endDate: null,
+                    hideTime: false
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Workshop', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: null,
+                    startDate: workshopStart.toISOString(),
+                    endDate: workshopEnd.toISOString(),
                     hideTime: false
                 },
                 { 
@@ -2038,10 +2174,9 @@
                 if (isCalendarView) { renderCalendar(); renderSchedule(); }
             });
 
-            // Initial calendar render (hidden but ready)
+            // Initial calendar render
             renderCalendar();
             renderSchedule();
-            // Show month view by default
             switchView('month');
         }
 
