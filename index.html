@@ -1893,15 +1893,9 @@
                 const d = new Date(event.eventDate);
                 if (d.toISOString().split('T')[0] === date.toISOString().split('T')[0]) {
                     startTime = d;
-                    // Check if the event has a specific time (not midnight)
-                    const hasTime = !(d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0);
-                    if (hasTime) {
-                        isSingleEvent = true;
-                        endTime = null;
-                    } else {
-                        // This is an all-day event - don't show in the grid
-                        return { startTime: null, endTime: null, isSingleEvent: true };
-                    }
+                    // Always show events with time, including midnight (00:00)
+                    isSingleEvent = true;
+                    endTime = null;
                 }
             } else if (event.startDate && event.endDate) {
                 const start = new Date(event.startDate);
@@ -2248,8 +2242,7 @@
                 // Filter events that have a specific time (including midnight 00:00) for the grid
                 const timedEvents = dayEvents.filter(ev => {
                     if (ev.eventDate) {
-                        const d = new Date(ev.eventDate);
-                        // Include midnight (00:00:00) events - they should show at 00:00
+                        // Include all events with eventDate (including midnight)
                         return true;
                     }
                     return true; // Range events always have time
@@ -2902,6 +2895,10 @@
             // Midnight event (12:00 AM)
             const midnightEvent = new Date();
             midnightEvent.setHours(0, 0, 0, 0);
+            
+            // 12:30 AM event
+            const halfPastMidnight = new Date();
+            halfPastMidnight.setHours(0, 30, 0, 0);
 
             events = [
                 { 
@@ -3038,7 +3035,7 @@
                 },
                 { 
                     id: nextId++, 
-                    name: 'Midnight Launch', 
+                    name: 'Midnight Launch 🎉', 
                     status: 'active', 
                     createdAt: now,
                     eventDate: midnightEvent.toISOString(),
@@ -3046,6 +3043,17 @@
                     endDate: null,
                     hideTime: false,
                     scheduleColor: '#c7d2fe'
+                },
+                { 
+                    id: nextId++, 
+                    name: 'Late Night Snack', 
+                    status: 'active', 
+                    createdAt: now,
+                    eventDate: halfPastMidnight.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false,
+                    scheduleColor: '#fed7aa'
                 },
                 { 
                     id: nextId++, 
