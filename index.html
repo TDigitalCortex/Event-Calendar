@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Event Clock · Calendar & Schedule</title>
     <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -20,9 +20,10 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
+            align-items: flex-start;
+            padding: 1rem;
             transition: background 0.2s;
+            overflow-y: auto;
         }
 
         .clock-card {
@@ -30,19 +31,20 @@
             width: 100%;
             background: #ffffff;
             border-radius: 40px;
-            padding: 2rem 2rem 2.2rem;
+            padding: 1.5rem 1.2rem 2rem;
             box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
             transition: background 0.2s, box-shadow 0.2s;
+            margin: 0 auto;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: #0b1e33;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.5rem;
             transition: color 0.2s;
         }
 
@@ -52,7 +54,7 @@
         .clock-display {
             background: #f8fafc;
             border-radius: 60px;
-            padding: 1.8rem 1rem;
+            padding: 1.2rem 1rem;
             text-align: center;
             margin-bottom: 1rem;
             border: 1px solid #e9edf2;
@@ -61,7 +63,7 @@
         }
 
         #realTimeClock {
-            font-size: 4.8rem;
+            font-size: 3.6rem;
             font-weight: 600;
             letter-spacing: 3px;
             color: #0b1e33;
@@ -71,7 +73,7 @@
         }
 
         .clock-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #64748b;
             letter-spacing: 1px;
             margin-top: 0.25rem;
@@ -82,24 +84,24 @@
         .settings-area {
             display: flex;
             justify-content: flex-end;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
             flex-wrap: wrap;
         }
 
         .settings-btn {
             background: #f1f5f9;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #1e293b;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             border: 1px solid #e2e8f0;
         }
 
@@ -137,17 +139,18 @@
         /* --- View Toggle within Calendar --- */
         .view-toggle-area {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .view-toggle-btn {
             background: #f1f5f9;
             border: none;
-            padding: 0.3rem 1rem;
+            padding: 0.25rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #64748b;
             cursor: pointer;
@@ -165,17 +168,19 @@
 
         .event-input-area {
             display: flex;
-            gap: 0.6rem;
-            margin-bottom: 1.5rem;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
         }
 
         .event-input-area input {
             flex: 1;
-            padding: 0.8rem 1.2rem;
+            min-width: 120px;
+            padding: 0.6rem 1rem;
             border-radius: 40px;
             border: 1px solid #d1d9e6;
             background: white;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
             transition: 0.15s;
         }
@@ -189,16 +194,17 @@
             background: #2563eb;
             border: none;
             color: white;
-            font-size: 1.1rem;
-            padding: 0 1.5rem;
+            font-size: 0.95rem;
+            padding: 0 1.2rem;
             border-radius: 40px;
             font-weight: 500;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
             box-shadow: 0 6px 14px -4px #2563eb70;
+            white-space: nowrap;
         }
 
         .event-input-area button:hover {
@@ -209,17 +215,18 @@
         /* --- Tabs --- */
         .tabs-container {
             display: flex;
-            gap: 0.3rem;
-            margin-bottom: 1.2rem;
+            gap: 0.2rem;
+            margin-bottom: 1rem;
             border-bottom: 2px solid #e9edf2;
             padding-bottom: 0.3rem;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             background: transparent;
             border: none;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #64748b;
             border-radius: 30px;
@@ -227,10 +234,10 @@
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
-        .tab-btn i { font-size: 0.85rem; }
+        .tab-btn i { font-size: 0.8rem; }
         .tab-btn:hover { background: #eef2f6; color: #1e293b; }
         .tab-btn.active {
             background: #2563eb;
@@ -242,8 +249,8 @@
             background: #cbd5e1;
             color: #1e293b;
             border-radius: 30px;
-            padding: 0.05rem 0.6rem;
-            font-size: 0.7rem;
+            padding: 0.05rem 0.5rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
 
@@ -253,12 +260,12 @@
         .event-list {
             list-style: none;
             padding: 0;
-            max-height: 320px;
+            max-height: 300px;
             overflow-y: auto;
             border-radius: 24px;
             background: #f8fafc;
             padding: 0.3rem;
-            min-height: 120px;
+            min-height: 100px;
             transition: background 0.2s;
         }
 
@@ -266,15 +273,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.7rem 0.8rem 0.7rem 1.2rem;
+            padding: 0.5rem 0.6rem 0.5rem 1rem;
             background: white;
-            margin: 0.3rem 0.2rem;
+            margin: 0.2rem 0.1rem;
             border-radius: 40px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
             border: 1px solid #e9edf2;
             transition: background 0.2s, border-color 0.2s, color 0.2s;
             flex-wrap: wrap;
-            gap: 0.3rem 0.6rem;
+            gap: 0.2rem 0.4rem;
         }
 
         .event-list li:hover { background: #fafcff; border-color: #cbd5e1; }
@@ -284,33 +291,34 @@
             color: #0b1e33;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            flex: 2 1 140px;
+            gap: 0.4rem;
+            flex: 2 1 120px;
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
-        .event-name i { color: #2563eb; width: 1.2rem; transition: color 0.2s; }
+        .event-name i { color: #2563eb; width: 1rem; transition: color 0.2s; }
 
         .event-date-range {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background: #eef2f6;
-            padding: 0.15rem 0.8rem;
+            padding: 0.1rem 0.6rem;
             border-radius: 30px;
             color: #1e293b;
             transition: background 0.2s, color 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
         }
 
         .event-date-range i {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: #64748b;
         }
 
         .event-actions {
             display: flex;
-            gap: 0.15rem;
+            gap: 0.1rem;
             align-items: center;
         }
 
@@ -319,8 +327,8 @@
             border: none;
             color: #94a3b8;
             cursor: pointer;
-            font-size: 0.95rem;
-            padding: 0.25rem 0.5rem;
+            font-size: 0.85rem;
+            padding: 0.2rem 0.4rem;
             border-radius: 30px;
             transition: 0.1s;
         }
@@ -333,15 +341,15 @@
         .empty-events {
             text-align: center;
             color: #94a3b8;
-            padding: 1.8rem 0.5rem;
-            font-size: 0.95rem;
+            padding: 1.5rem 0.5rem;
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
         /* --- Calendar Views --- */
         .calendar-view {
             display: none;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
         }
 
         .calendar-view.visible {
@@ -352,30 +360,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
         }
 
         .calendar-header h2 {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #0b1e33;
-            min-width: 160px;
+            min-width: 120px;
             text-align: center;
         }
 
         .calendar-nav-btn {
             background: #f1f5f9;
             border: none;
-            padding: 0.4rem 0.8rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
             color: #1e293b;
         }
 
@@ -388,27 +396,28 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.3rem;
+            gap: 0.2rem;
             background: #f8fafc;
-            border-radius: 24px;
-            padding: 0.5rem;
+            border-radius: 20px;
+            padding: 0.4rem;
+            overflow-x: auto;
         }
 
         .calendar-day-header {
             text-align: center;
             font-weight: 600;
             color: #64748b;
-            font-size: 0.8rem;
-            padding: 0.5rem 0;
+            font-size: 0.7rem;
+            padding: 0.3rem 0;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .calendar-day {
             background: white;
-            border-radius: 16px;
-            padding: 0.5rem 0.3rem 0.3rem;
-            min-height: 80px;
+            border-radius: 12px;
+            padding: 0.3rem 0.2rem 0.2rem;
+            min-height: 60px;
             border: 1px solid #e9edf2;
             transition: 0.15s;
             cursor: default;
@@ -425,26 +434,26 @@
 
         .calendar-day .day-number {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #0b1e33;
-            padding: 0 0.3rem;
-            margin-bottom: 0.2rem;
+            padding: 0 0.2rem;
+            margin-bottom: 0.1rem;
         }
 
         .calendar-day .day-events {
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
-            max-height: 60px;
+            gap: 0.1rem;
+            max-height: 45px;
             overflow-y: auto;
         }
 
         .calendar-day .day-events .cal-event {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             background: #dbeafe;
             color: #1e40af;
-            padding: 0.1rem 0.3rem;
-            border-radius: 8px;
+            padding: 0.05rem 0.2rem;
+            border-radius: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -461,7 +470,7 @@
         .calendar-day .day-events .cal-event.more {
             background: transparent;
             color: #2563eb;
-            font-size: 0.55rem;
+            font-size: 0.45rem;
             padding: 0;
             cursor: pointer;
             font-weight: 500;
@@ -474,8 +483,9 @@
         /* --- Schedule View (Week with Timeline) --- */
         .schedule-view {
             display: none;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             overflow-x: auto;
+            overflow-y: visible;
         }
 
         .schedule-view.visible {
@@ -485,19 +495,20 @@
         /* --- Date Header for Schedule View --- */
         .schedule-date-header {
             display: flex;
-            gap: 0.3rem;
-            margin-bottom: 0.3rem;
+            gap: 0.2rem;
+            margin-bottom: 0.2rem;
             background: #f8fafc;
-            border-radius: 24px 24px 0 0;
-            padding: 0.5rem 0.5rem 0.3rem;
+            border-radius: 20px 20px 0 0;
+            padding: 0.4rem 0.4rem 0.2rem;
+            min-width: 700px;
         }
 
         .schedule-date-header .date-header-item {
             flex: 1;
             background: white;
-            border-radius: 16px 16px 0 0;
-            padding: 0.3rem 0.5rem;
-            min-height: 50px;
+            border-radius: 12px 12px 0 0;
+            padding: 0.2rem 0.3rem;
+            min-height: 40px;
             border: 1px solid #e9edf2;
             border-bottom: none;
         }
@@ -508,11 +519,11 @@
         }
 
         .schedule-date-header .date-header-item .date-label {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             font-weight: 600;
             color: #64748b;
             text-align: center;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
         }
 
         .schedule-date-header .date-header-item .date-label.today-label {
@@ -522,17 +533,17 @@
         .schedule-date-header .date-header-item .header-events {
             display: flex;
             flex-direction: column;
-            gap: 0.1rem;
-            max-height: 80px;
+            gap: 0.05rem;
+            max-height: 50px;
             overflow-y: auto;
         }
 
         .schedule-date-header .date-header-item .header-events .header-event {
-            font-size: 0.55rem;
+            font-size: 0.45rem;
             background: #dbeafe;
             color: #1e40af;
-            padding: 0.05rem 0.3rem;
-            border-radius: 6px;
+            padding: 0.05rem 0.2rem;
+            border-radius: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -549,7 +560,7 @@
         .schedule-date-header .date-header-item .header-events .header-event.more {
             background: transparent;
             color: #2563eb;
-            font-size: 0.5rem;
+            font-size: 0.4rem;
             padding: 0;
             cursor: pointer;
             font-weight: 500;
@@ -560,46 +571,47 @@
         }
 
         .schedule-date-header .date-header-item .no-header-events {
-            font-size: 0.55rem;
+            font-size: 0.45rem;
             color: #94a3b8;
             text-align: center;
-            padding: 0.2rem 0;
+            padding: 0.1rem 0;
         }
 
         /* --- Schedule Container --- */
         .schedule-container {
             display: flex;
-            gap: 0.3rem;
+            gap: 0.2rem;
             background: #f8fafc;
-            border-radius: 0 0 24px 24px;
-            padding: 0.5rem;
+            border-radius: 0 0 20px 20px;
+            padding: 0.4rem;
             min-width: 700px;
             position: relative;
             padding-top: 0;
+            overflow-x: auto;
         }
 
         .schedule-time-column {
-            flex: 0 0 60px;
-            min-width: 60px;
+            flex: 0 0 50px;
+            min-width: 50px;
             background: white;
-            border-radius: 16px;
-            padding: 0.3rem 0.2rem;
+            border-radius: 12px;
+            padding: 0.2rem 0.1rem;
             border: 1px solid #e9edf2;
             position: sticky;
             left: 0;
             z-index: 30;
             display: flex;
             flex-direction: column;
-            padding-top: 0.8rem;
+            padding-top: 0.6rem;
         }
 
         .schedule-time-slot {
-            height: 60px;
-            min-height: 60px;
+            height: 50px;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #64748b;
             border-bottom: 1px solid #f1f5f9;
             font-weight: 500;
@@ -613,10 +625,10 @@
         .schedule-day-column {
             flex: 1;
             background: white;
-            border-radius: 16px;
-            padding: 0.3rem;
+            border-radius: 12px;
+            padding: 0.2rem;
             border: 1px solid #e9edf2;
-            min-width: 80px;
+            min-width: 60px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -632,8 +644,8 @@
             text-align: center;
             font-weight: 600;
             color: #64748b;
-            font-size: 0.75rem;
-            padding: 0.3rem 0;
+            font-size: 0.65rem;
+            padding: 0.2rem 0;
             border-bottom: 2px solid #e9edf2;
             margin-bottom: 0;
             background: inherit;
@@ -647,7 +659,7 @@
         }
 
         .schedule-day-header .day-number {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: block;
             font-weight: 700;
         }
@@ -655,13 +667,13 @@
         .schedule-day-grid {
             position: relative;
             flex: 1;
-            min-height: 720px;
-            padding-top: 0.8rem;
+            min-height: 600px;
+            padding-top: 0.6rem;
         }
 
         .schedule-hour-slot {
-            height: 60px;
-            min-height: 60px;
+            height: 50px;
+            min-height: 50px;
             border-bottom: 1px solid #f1f5f9;
             position: relative;
             flex-shrink: 0;
@@ -676,15 +688,15 @@
             position: absolute;
             left: 2px;
             right: 2px;
-            border-radius: 6px;
-            padding: 0.2rem 0.3rem;
+            border-radius: 4px;
+            padding: 0.1rem 0.2rem;
             cursor: pointer;
             transition: all 0.15s ease;
             overflow: visible;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 22px;
+            min-height: 18px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             border-width: 2px;
             border-style: solid;
@@ -717,15 +729,15 @@
         /* Overlap indicator badge */
         .schedule-event .overlap-badge {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -6px;
+            right: -6px;
             background: #ef4444;
             color: white;
-            font-size: 0.5rem;
-            padding: 0.05rem 0.4rem;
-            border-radius: 10px;
+            font-size: 0.4rem;
+            padding: 0.05rem 0.3rem;
+            border-radius: 8px;
             font-weight: 700;
-            line-height: 1.4;
+            line-height: 1.2;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 20;
             border: 1px solid white;
@@ -757,135 +769,36 @@
         }
 
         .schedule-event .event-name-small {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             font-weight: 600;
             color: #1e293b;
-            line-height: 1.2;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            padding: 0 2px;
+            padding: 0 1px;
         }
 
         .schedule-event .event-time-range {
-            font-size: 0.5rem;
+            font-size: 0.4rem;
             color: #475569;
             opacity: 0.85;
-            line-height: 1.2;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            padding: 0 2px;
+            padding: 0 1px;
         }
 
         .schedule-event .event-time-range .time-separator {
-            margin: 0 0.15rem;
-        }
-
-        /* Overlap selector popup */
-        .overlap-selector {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 24px;
-            padding: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            z-index: 500;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .overlap-selector.open {
-            display: block;
-        }
-
-        .overlap-selector-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            z-index: 499;
-        }
-
-        .overlap-selector-overlay.open {
-            display: block;
-        }
-
-        .overlap-selector h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #0b1e33;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #e9edf2;
-            padding-bottom: 0.5rem;
-        }
-
-        .overlap-selector .close-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-
-        .overlap-selector .close-btn:hover {
-            color: #0b1e33;
-        }
-
-        .overlap-item {
-            padding: 0.6rem 0.8rem;
-            margin: 0.3rem 0;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #2563eb;
-            cursor: pointer;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .overlap-item:hover {
-            background: #eef2f6;
-            transform: translateX(4px);
-        }
-
-        .overlap-item .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            border: 1px solid #e2e8f0;
-        }
-
-        .overlap-item .overlap-name {
-            font-weight: 500;
-            color: #0b1e33;
-            flex: 1;
-        }
-
-        .overlap-item .overlap-time {
-            font-size: 0.75rem;
-            color: #64748b;
+            margin: 0 0.1rem;
         }
 
         .schedule-empty {
             text-align: center;
             color: #94a3b8;
-            font-size: 0.7rem;
-            padding: 1rem 0;
+            font-size: 0.6rem;
+            padding: 0.5rem 0;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -910,24 +823,25 @@
 
         .day-popup-box {
             background: white;
-            border-radius: 32px;
-            max-width: 420px;
+            border-radius: 24px;
+            max-width: 400px;
             width: 92%;
-            padding: 1.8rem 2rem 2rem;
+            padding: 1.5rem;
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5);
             max-height: 80vh;
             overflow-y: auto;
+            margin: 1rem;
         }
 
         .day-popup-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
 
         .day-popup-header h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #0b1e33;
         }
@@ -935,10 +849,10 @@
         .day-popup-close {
             background: none;
             border: none;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #94a3b8;
             cursor: pointer;
-            padding: 0 0.4rem;
+            padding: 0 0.3rem;
             border-radius: 30px;
             transition: 0.15s;
         }
@@ -946,8 +860,8 @@
         .day-popup-close:hover { background: #f1f5f9; color: #0b1e33; }
 
         .day-popup-event {
-            padding: 0.6rem 0.8rem;
-            margin: 0.3rem 0;
+            padding: 0.5rem 0.6rem;
+            margin: 0.2rem 0;
             background: #f8fafc;
             border-radius: 12px;
             border-left: 4px solid #2563eb;
@@ -962,20 +876,21 @@
         .day-popup-event .event-name-popup {
             font-weight: 500;
             color: #0b1e33;
+            font-size: 0.95rem;
         }
 
         .day-popup-event .event-time-popup {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
-            margin-left: 0.5rem;
+            margin-left: 0.4rem;
         }
 
         .day-popup-event .event-color-preview {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 4px;
-            margin-right: 0.4rem;
+            margin-right: 0.3rem;
             vertical-align: middle;
             border: 1px solid #e2e8f0;
         }
@@ -1001,16 +916,17 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 1rem;
         }
 
         .modal-overlay.open { display: flex; }
 
         .modal-box {
             background: white;
-            border-radius: 32px;
+            border-radius: 28px;
             max-width: 720px;
-            width: 95%;
-            padding: 2rem 2.5rem 2.5rem;
+            width: 100%;
+            padding: 1.5rem;
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5);
             max-height: 90vh;
             overflow-y: auto;
@@ -1021,16 +937,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .modal-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: #0b1e33;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .modal-header h2 i { color: #2563eb; }
@@ -1038,10 +954,10 @@
         .modal-close {
             background: none;
             border: none;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #94a3b8;
             cursor: pointer;
-            padding: 0 0.4rem;
+            padding: 0 0.3rem;
             border-radius: 30px;
             transition: 0.15s;
         }
@@ -1049,8 +965,8 @@
         .modal-close:hover { background: #f1f5f9; color: #0b1e33; }
 
         .settings-group {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.2rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #e9edf2;
         }
 
@@ -1060,20 +976,20 @@
             display: block;
             font-weight: 500;
             color: #1e293b;
-            margin-bottom: 0.4rem;
-            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
         }
 
         .settings-group .color-row {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
             flex-wrap: wrap;
         }
 
         .settings-group input[type="color"] {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             border: 2px solid #d1d9e6;
             border-radius: 30px;
             padding: 2px;
@@ -1083,12 +999,12 @@
 
         .settings-group input[type="text"] {
             flex: 1;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 30px;
             border: 1px solid #d1d9e6;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
-            min-width: 140px;
+            min-width: 100px;
         }
 
         .settings-group input[type="text"]:focus {
@@ -1100,15 +1016,15 @@
         .settings-group input[type="datetime-local"],
         .settings-group input[type="date"] {
             width: 100%;
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 0.8rem;
             border-radius: 30px;
             border: 1px solid #d1d9e6;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
             background: white;
             color: #0b1e33;
-            min-height: 44px;
-            min-width: 200px;
+            min-height: 40px;
+            min-width: 160px;
         }
 
         .settings-group input[type="datetime-local"]:focus,
@@ -1118,9 +1034,9 @@
         }
 
         .settings-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 0.5rem;
+            width: 16px;
+            height: 16px;
+            margin-right: 0.4rem;
             accent-color: #2563eb;
             cursor: pointer;
         }
@@ -1128,22 +1044,23 @@
         .settings-group .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
             font-weight: 400;
             color: #1e293b;
             cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .settings-group textarea {
             width: 100%;
-            padding: 0.6rem 1rem;
-            border-radius: 16px;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
             border: 1px solid #d1d9e6;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
             background: white;
             color: #0b1e33;
-            min-height: 80px;
+            min-height: 70px;
             resize: vertical;
             font-family: inherit;
         }
@@ -1154,18 +1071,18 @@
         }
 
         .settings-note {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #94a3b8;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
 
         .settings-note .key-hint {
             display: inline-block;
             background: #eef2f6;
-            padding: 0.05rem 0.5rem;
+            padding: 0.05rem 0.4rem;
             border-radius: 4px;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #1e293b;
             margin: 0 0.1rem;
         }
@@ -1174,14 +1091,14 @@
             background: #2563eb;
             border: none;
             color: white;
-            font-size: 1rem;
-            padding: 0.6rem 1.8rem;
+            font-size: 0.95rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 40px;
             font-weight: 500;
             cursor: pointer;
             transition: 0.15s;
             box-shadow: 0 6px 14px -4px #2563eb70;
-            margin-top: 0.8rem;
+            margin-top: 0.6rem;
             width: 100%;
         }
 
@@ -1190,7 +1107,7 @@
         /* --- Fixed Date Input Wrapper --- */
         .date-input-wrapper {
             display: flex;
-            gap: 0.6rem;
+            gap: 0.5rem;
             align-items: center;
             flex-wrap: nowrap;
             width: 100%;
@@ -1199,7 +1116,7 @@
         .date-input-wrapper input[type="datetime-local"],
         .date-input-wrapper input[type="date"] {
             flex: 1;
-            min-width: 180px;
+            min-width: 140px;
             width: 100%;
         }
 
@@ -1207,18 +1124,18 @@
             background: #fee2e2;
             border: none;
             color: #ef4444;
-            padding: 0.4rem 1rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
             white-space: nowrap;
             flex-shrink: 0;
-            min-height: 44px;
-            min-width: 70px;
+            min-height: 38px;
+            min-width: 60px;
             justify-content: center;
         }
 
@@ -1230,22 +1147,22 @@
         /* --- Date Range Wrapper --- */
         .date-range-wrapper {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
             width: 100%;
         }
 
         .date-range-item {
             flex: 1;
-            min-width: 240px;
+            min-width: 180px;
         }
 
         .date-range-item label {
             display: block;
             font-weight: 400;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #64748b;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
         }
 
         .date-range-item .date-input-wrapper {
@@ -1254,22 +1171,22 @@
 
         /* AM/PM Toggle Hint - only show when hide time is false */
         .ampm-hint {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #64748b;
-            margin-top: 0.2rem;
+            margin-top: 0.15rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
         }
 
         .ampm-hint .key {
             display: inline-block;
             background: #eef2f6;
-            padding: 0.05rem 0.5rem;
+            padding: 0.05rem 0.4rem;
             border-radius: 4px;
             font-weight: 600;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: #1e293b;
             border: 1px solid #d1d9e6;
         }
@@ -1282,13 +1199,13 @@
         .schedule-color-picker {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
         }
 
         .schedule-color-picker input[type="color"] {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border: 2px solid #d1d9e6;
             border-radius: 30px;
             padding: 2px;
@@ -1297,29 +1214,29 @@
         }
 
         .schedule-color-picker .color-preview {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 30px;
             border: 2px solid #d1d9e6;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #64748b;
             transition: 0.15s;
         }
 
         .schedule-color-picker .color-hex-input {
             flex: 1;
-            min-width: 100px;
+            min-width: 80px;
         }
 
         .schedule-color-picker .reset-color-btn {
             background: #f1f5f9;
             border: none;
-            padding: 0.3rem 0.8rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: 0.15s;
             color: #1e293b;
@@ -1331,12 +1248,12 @@
 
         /* --- Footer --- */
         .footer-credit {
-            margin-top: 1.8rem;
-            font-size: 0.75rem;
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
             color: #94a3b8;
             text-align: center;
             border-top: 1px solid #e2e8f0;
-            padding-top: 1.2rem;
+            padding-top: 1rem;
             transition: color 0.2s, border-color 0.2s;
         }
 
@@ -1346,7 +1263,6 @@
         .schedule-day-grid::-webkit-scrollbar,
         .day-popup-box::-webkit-scrollbar,
         .modal-box::-webkit-scrollbar,
-        .overlap-selector::-webkit-scrollbar,
         .schedule-date-header .date-header-item .header-events::-webkit-scrollbar {
             width: 4px;
         }
@@ -1355,7 +1271,6 @@
         .schedule-day-grid::-webkit-scrollbar-track,
         .day-popup-box::-webkit-scrollbar-track,
         .modal-box::-webkit-scrollbar-track,
-        .overlap-selector::-webkit-scrollbar-track,
         .schedule-date-header .date-header-item .header-events::-webkit-scrollbar-track {
             background: #e2e8f0;
             border-radius: 20px;
@@ -1365,98 +1280,337 @@
         .schedule-day-grid::-webkit-scrollbar-thumb,
         .day-popup-box::-webkit-scrollbar-thumb,
         .modal-box::-webkit-scrollbar-thumb,
-        .overlap-selector::-webkit-scrollbar-thumb,
         .schedule-date-header .date-header-item .header-events::-webkit-scrollbar-thumb {
             background: #b9c7da;
             border-radius: 20px;
         }
 
-        /* responsive */
-        @media (max-width: 768px) {
-            .modal-box {
-                max-width: 95%;
-                padding: 1.5rem;
+        /* --- Mobile specific overrides --- */
+        @media (max-width: 650px) {
+            .clock-card {
+                padding: 1rem;
+                border-radius: 28px;
             }
+            
+            #realTimeClock {
+                font-size: 2.8rem;
+            }
+            
+            .settings-area {
+                justify-content: center;
+            }
+            
+            .settings-btn {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+            
             .date-range-item {
                 min-width: 100%;
             }
+            
+            .date-input-wrapper {
+                flex-wrap: wrap;
+            }
+            
             .date-input-wrapper input[type="datetime-local"],
             .date-input-wrapper input[type="date"] {
-                min-width: 120px;
+                min-width: 100px;
             }
+            
             .clear-date-btn {
-                min-width: 60px;
-                padding: 0.3rem 0.6rem;
+                min-height: 34px;
+                padding: 0.2rem 0.5rem;
+                font-size: 0.65rem;
+            }
+            
+            .calendar-grid {
+                gap: 0.15rem;
+                padding: 0.3rem;
+            }
+            
+            .calendar-day {
+                min-height: 50px;
+                padding: 0.2rem 0.1rem 0.1rem;
+            }
+            
+            .calendar-day .day-number {
                 font-size: 0.7rem;
             }
-            .schedule-event .event-name-small { font-size: 0.55rem; }
-            .schedule-event .event-time-range { font-size: 0.45rem; }
-            .schedule-color-picker { gap: 0.5rem; }
-            .overlap-selector { max-width: 90%; }
-            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.5rem; }
-            .schedule-time-column { padding-top: 0.6rem; }
-            .schedule-day-grid { padding-top: 0.6rem; }
-        }
-
-        @media (max-width: 650px) {
-            .clock-card { padding: 1.2rem; }
-            #realTimeClock { font-size: 3.4rem; }
-            .event-input-area { flex-wrap: wrap; }
-            .event-input-area button { width: 100%; justify-content: center; }
-            .tabs-container { flex-wrap: wrap; }
-            .modal-box { padding: 1.2rem; width: 98%; }
-            .settings-area { flex-direction: column; align-items: stretch; }
-            .calendar-header h2 { font-size: 1rem; min-width: auto; }
-            .calendar-grid { gap: 0.15rem; padding: 0.3rem; }
-            .calendar-day { min-height: 60px; padding: 0.3rem 0.15rem; }
-            .calendar-day .day-number { font-size: 0.7rem; }
-            .calendar-day .day-events .cal-event { font-size: 0.5rem; }
-            .schedule-container { min-width: 500px; }
-            .schedule-time-column { flex: 0 0 40px; min-width: 40px; padding-top: 0.5rem; }
-            .schedule-time-slot { height: 40px; min-height: 40px; font-size: 0.6rem; }
-            .schedule-day-grid { min-height: 480px; padding-top: 0.5rem; }
-            .schedule-hour-slot { height: 40px; min-height: 40px; }
-            .schedule-event { min-height: 16px; padding: 0.1rem 0.2rem; }
-            .schedule-event .event-name-small { font-size: 0.5rem; }
-            .schedule-event .event-time-range { font-size: 0.4rem; }
-            .schedule-event .overlap-badge { font-size: 0.4rem; top: -6px; right: -6px; padding: 0.05rem 0.3rem; }
-            .schedule-date-header { flex-wrap: wrap; gap: 0.15rem; }
-            .schedule-date-header .date-header-item { min-height: 35px; padding: 0.2rem 0.3rem; }
-            .schedule-date-header .date-header-item .header-events { max-height: 50px; }
-            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.45rem; }
-            .date-input-wrapper { flex-wrap: wrap; }
-            .date-input-wrapper input[type="datetime-local"],
-            .date-input-wrapper input[type="date"] { min-width: 100px; }
-            .clear-date-btn { min-height: 38px; padding: 0.3rem 0.6rem; }
-            .date-range-wrapper { flex-direction: column; }
-            .date-range-item { min-width: 100%; }
-            .view-toggle-area { flex-wrap: wrap; }
+            
+            .calendar-day .day-events .cal-event {
+                font-size: 0.45rem;
+            }
+            
+            .schedule-container {
+                min-width: 550px;
+                padding: 0.3rem;
+            }
+            
+            .schedule-date-header {
+                min-width: 550px;
+                padding: 0.3rem 0.3rem 0.15rem;
+            }
+            
+            .schedule-time-column {
+                flex: 0 0 40px;
+                min-width: 40px;
+                padding-top: 0.5rem;
+            }
+            
+            .schedule-time-slot {
+                height: 40px;
+                min-height: 40px;
+                font-size: 0.55rem;
+            }
+            
+            .schedule-day-grid {
+                min-height: 480px;
+                padding-top: 0.5rem;
+            }
+            
+            .schedule-hour-slot {
+                height: 40px;
+                min-height: 40px;
+            }
+            
+            .schedule-event {
+                min-height: 16px;
+                padding: 0.1rem 0.15rem;
+            }
+            
+            .schedule-event .event-name-small {
+                font-size: 0.45rem;
+            }
+            
+            .schedule-event .event-time-range {
+                font-size: 0.35rem;
+            }
+            
+            .schedule-event .overlap-badge {
+                font-size: 0.35rem;
+                top: -5px;
+                right: -5px;
+                padding: 0.05rem 0.25rem;
+            }
+            
+            .schedule-date-header .date-header-item {
+                min-height: 35px;
+                padding: 0.15rem 0.2rem;
+            }
+            
+            .schedule-date-header .date-header-item .header-events {
+                max-height: 40px;
+            }
+            
+            .schedule-date-header .date-header-item .header-events .header-event {
+                font-size: 0.4rem;
+            }
+            
+            .modal-box {
+                padding: 1.2rem;
+                border-radius: 24px;
+            }
+            
+            .modal-header h2 {
+                font-size: 1.1rem;
+            }
+            
             .settings-group input[type="datetime-local"],
-            .settings-group input[type="date"] { min-width: 100px; font-size: 0.85rem; }
-            .schedule-color-picker { flex-direction: column; align-items: stretch; }
-            .schedule-color-picker .color-preview { width: 100%; height: 40px; }
-            .overlap-selector { max-width: 95%; padding: 1rem; }
-            .overlap-item { padding: 0.4rem 0.6rem; }
-            .schedule-time-column { flex: 0 0 35px; min-width: 35px; }
-            .settings-group textarea { min-height: 60px; font-size: 0.8rem; }
+            .settings-group input[type="date"] {
+                font-size: 0.8rem;
+                min-height: 36px;
+            }
+            
+            .settings-group textarea {
+                min-height: 60px;
+                font-size: 0.8rem;
+            }
+            
+            .schedule-color-picker {
+                gap: 0.5rem;
+            }
+            
+            .schedule-color-picker input[type="color"] {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .schedule-color-picker .color-preview {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .day-popup-box {
+                padding: 1.2rem;
+                max-width: 95%;
+            }
+            
+            .view-toggle-area {
+                gap: 0.3rem;
+            }
+            
+            .view-toggle-btn {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.6rem;
+            }
+            
+            .calendar-nav-btn {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+            
+            .calendar-header h2 {
+                font-size: 0.95rem;
+                min-width: 100px;
+            }
+            
+            .event-list li {
+                padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+            }
+            
+            .event-name {
+                font-size: 0.8rem;
+                flex: 2 1 100px;
+            }
+            
+            .event-date-range {
+                font-size: 0.65rem;
+                padding: 0.05rem 0.4rem;
+            }
+            
+            .event-actions button {
+                font-size: 0.75rem;
+                padding: 0.15rem 0.3rem;
+            }
+            
+            .tabs-container {
+                gap: 0.15rem;
+            }
+            
+            .tab-btn {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.7rem;
+            }
+            
+            .tab-btn .badge {
+                font-size: 0.55rem;
+            }
         }
 
         @media (max-width: 400px) {
-            .date-input-wrapper { flex-direction: column; align-items: stretch; }
+            .clock-card {
+                padding: 0.8rem;
+                border-radius: 20px;
+            }
+            
+            #realTimeClock {
+                font-size: 2.2rem;
+            }
+            
+            .schedule-container {
+                min-width: 450px;
+                padding: 0.2rem;
+                gap: 0.15rem;
+            }
+            
+            .schedule-date-header {
+                min-width: 450px;
+                padding: 0.2rem 0.2rem 0.1rem;
+                gap: 0.1rem;
+            }
+            
+            .schedule-time-column {
+                flex: 0 0 32px;
+                min-width: 32px;
+                padding-top: 0.4rem;
+            }
+            
+            .schedule-time-slot {
+                height: 32px;
+                min-height: 32px;
+                font-size: 0.45rem;
+            }
+            
+            .schedule-day-grid {
+                min-height: 384px;
+                padding-top: 0.4rem;
+            }
+            
+            .schedule-hour-slot {
+                height: 32px;
+                min-height: 32px;
+            }
+            
+            .schedule-event {
+                min-height: 14px;
+                padding: 0.05rem 0.1rem;
+            }
+            
+            .schedule-event .event-name-small {
+                font-size: 0.4rem;
+            }
+            
+            .schedule-event .event-time-range {
+                font-size: 0.3rem;
+            }
+            
+            .schedule-event .overlap-badge {
+                font-size: 0.3rem;
+                top: -4px;
+                right: -4px;
+                padding: 0.05rem 0.2rem;
+            }
+            
+            .schedule-date-header .date-header-item {
+                min-height: 30px;
+                padding: 0.1rem 0.15rem;
+            }
+            
+            .schedule-date-header .date-header-item .date-label {
+                font-size: 0.45rem;
+            }
+            
+            .schedule-date-header .date-header-item .header-events .header-event {
+                font-size: 0.35rem;
+            }
+            
             .date-input-wrapper input[type="datetime-local"],
-            .date-input-wrapper input[type="date"] { min-width: 100%; }
-            .clear-date-btn { justify-content: center; min-width: 100%; }
-            .modal-box { padding: 1rem; }
-            .settings-group input[type="datetime-local"],
-            .settings-group input[type="date"] { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
-            .overlap-selector { padding: 0.8rem; }
-            .overlap-item .overlap-time { font-size: 0.65rem; }
-            .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
-            .schedule-time-column { flex: 0 0 30px; min-width: 30px; padding-top: 0.4rem; }
-            .schedule-time-slot { font-size: 0.5rem; height: 30px; min-height: 30px; }
-            .schedule-hour-slot { height: 30px; min-height: 30px; }
-            .schedule-day-grid { padding-top: 0.4rem; }
-            .settings-group textarea { min-height: 50px; font-size: 0.75rem; }
+            .date-input-wrapper input[type="date"] {
+                min-width: 80px;
+                font-size: 0.75rem;
+            }
+            
+            .modal-box {
+                padding: 0.8rem;
+                border-radius: 20px;
+            }
+            
+            .modal-header h2 {
+                font-size: 1rem;
+            }
+            
+            .calendar-grid {
+                gap: 0.1rem;
+                padding: 0.2rem;
+            }
+            
+            .calendar-day {
+                min-height: 40px;
+                padding: 0.15rem 0.05rem 0.05rem;
+            }
+            
+            .calendar-day .day-number {
+                font-size: 0.6rem;
+            }
+            
+            .calendar-day .day-events .cal-event {
+                font-size: 0.4rem;
+            }
+            
+            .event-list {
+                max-height: 200px;
+            }
         }
     </style>
 </head>
@@ -2203,7 +2357,7 @@
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             
             // First column is empty for time column alignment
-            html += `<div class="date-header-item" style="flex: 0 0 60px; min-width: 60px; background: transparent; border: none; min-height: auto;"></div>`;
+            html += `<div class="date-header-item" style="flex: 0 0 50px; min-width: 50px; background: transparent; border: none; min-height: auto;"></div>`;
             
             for (let i = 0; i < 7; i++) {
                 const date = new Date(startOfWeek);
