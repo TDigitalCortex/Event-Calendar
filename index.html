@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Clock · Global & Event Settings</title>
+    <title>Event Clock · Date Management</title>
     <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -246,13 +246,21 @@
             flex-wrap: wrap;
         }
 
-        .event-time, .event-date {
-            font-size: 0.8rem;
+        .event-date-range {
+            font-size: 0.75rem;
             background: #eef2f6;
             padding: 0.15rem 0.8rem;
             border-radius: 30px;
             color: #1e293b;
             transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .event-date-range i {
+            font-size: 0.65rem;
+            color: #64748b;
         }
 
         .event-actions {
@@ -285,7 +293,7 @@
             transition: color 0.2s;
         }
 
-        /* --- Settings Modal (popup) --- */
+        /* --- Settings Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -302,7 +310,7 @@
         .modal-box {
             background: white;
             border-radius: 32px;
-            max-width: 520px;
+            max-width: 560px;
             width: 92%;
             padding: 1.8rem 2rem 2rem;
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5);
@@ -392,6 +400,23 @@
             box-shadow: 0 0 0 3px #2563eb30;
         }
 
+        .settings-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.5rem;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .settings-group .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 400;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
         .settings-note {
             font-size: 0.8rem;
             color: #94a3b8;
@@ -446,7 +471,7 @@
 
 <div class="clock-card" id="appContainer">
     <h1 id="mainHeading">
-        <i class="fas fa-clock" id="headingIcon"></i> Event Clock · Settings
+        <i class="fas fa-clock" id="headingIcon"></i> Event Clock · Date Manager
     </h1>
 
     <!-- Real-time Clock -->
@@ -481,11 +506,11 @@
     </div>
 
     <div class="footer-credit" id="footerCredit">
-        <i class="fas fa-cog"></i> Click <i class="fas fa-cog"></i> on any event for date settings
+        <i class="fas fa-calendar-alt"></i> Events with date ranges · Click <i class="fas fa-cog"></i> to manage dates
     </div>
 </div>
 
-<!-- Settings Modal (shared for Global & Event) -->
+<!-- Settings Modal -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-box" id="modalBox">
         <div class="modal-header">
@@ -493,7 +518,7 @@
             <button class="modal-close" id="modalCloseBtn">&times;</button>
         </div>
 
-        <!-- Global Styles (always visible) -->
+        <!-- Global Styles Section -->
         <div id="globalSettingsSection">
             <div class="settings-group">
                 <label>Card Background</label>
@@ -542,9 +567,18 @@
                     <input type="text" id="taskCardText" value="#ffffff" placeholder="#hex">
                 </div>
             </div>
+
+            <div class="settings-group">
+                <label>Standard Time Format</label>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="standardTimeCheckbox">
+                    <span>Use 12-hour format (AM/PM) instead of 24-hour</span>
+                </div>
+                <div class="settings-note">Applies to all date/time displays</div>
+            </div>
         </div>
 
-        <!-- Event-specific Settings (shown when editing an event) -->
+        <!-- Event-specific Settings -->
         <div id="eventSettingsSection" style="display: none;">
             <div class="settings-group">
                 <label>Event Name</label>
@@ -552,15 +586,39 @@
             </div>
 
             <div class="settings-group">
-                <label>Event Date & Time</label>
-                <input type="datetime-local" id="eventDateTime">
-                <div class="settings-note">Set the date and time for this event.</div>
+                <label>Event Date (Single)</label>
+                <input type="datetime-local" id="eventDateSingle">
+                <div class="settings-note">Set a single date for this event.</div>
+            </div>
+
+            <div class="settings-group">
+                <label>Date Range</label>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:140px;">
+                        <label style="font-weight:400; font-size:0.8rem; color:#64748b;">Start Date</label>
+                        <input type="datetime-local" id="eventStartDate">
+                    </div>
+                    <div style="flex:1; min-width:140px;">
+                        <label style="font-weight:400; font-size:0.8rem; color:#64748b;">End Date</label>
+                        <input type="datetime-local" id="eventEndDate">
+                    </div>
+                </div>
+                <div class="settings-note">If both Start and End dates are set, they override the single Event Date.</div>
+            </div>
+
+            <div class="settings-group">
+                <label>Hide Time in Displays</label>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="hideTimeCheckbox">
+                    <span>Show dates without time (date only)</span>
+                </div>
+                <div class="settings-note">Applies to all three date fields above.</div>
             </div>
 
             <div class="settings-group">
                 <label>Created At (read-only)</label>
                 <input type="text" id="eventCreatedAt" readonly style="background:#f1f5f9; cursor:default;">
-                <div class="settings-note">This is when the event was originally created.</div>
+                <div class="settings-note">Original creation timestamp.</div>
             </div>
         </div>
 
@@ -605,48 +663,82 @@
         const pageBgText = document.getElementById('pageBgText');
         const taskCardColor = document.getElementById('taskCardColor');
         const taskCardText = document.getElementById('taskCardText');
+        const standardTimeCheckbox = document.getElementById('standardTimeCheckbox');
 
         // Event-specific inputs
         const eventNameEdit = document.getElementById('eventNameEdit');
-        const eventDateTime = document.getElementById('eventDateTime');
+        const eventDateSingle = document.getElementById('eventDateSingle');
+        const eventStartDate = document.getElementById('eventStartDate');
+        const eventEndDate = document.getElementById('eventEndDate');
         const eventCreatedAt = document.getElementById('eventCreatedAt');
+        const hideTimeCheckbox = document.getElementById('hideTimeCheckbox');
 
         // --- State ---
         let events = [];
         let nextId = 1;
         let currentTab = 'active';
-        let currentEditingEventId = null; // null = global settings mode
+        let currentEditingEventId = null;
+        let useStandardTime = false;
 
         // --- Real-time clock ---
         function updateClock() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            realTimeClock.textContent = `${h}:${m}:${s}`;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
+            let hours = now.getHours();
+            let minutes = String(now.getMinutes()).padStart(2, '0');
+            let seconds = String(now.getSeconds()).padStart(2, '0');
+            let timeStr;
 
-        // --- Helpers ---
-        function formatTime(sec) {
-            const m = Math.floor(sec / 60);
-            const s = sec % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        function getNowISO() {
-            return new Date().toLocaleString('en-US', { hour12: false });
+            if (useStandardTime) {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                timeStr = `${hours}:${minutes}:${seconds} ${ampm}`;
+            } else {
+                timeStr = `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+            }
+            realTimeClock.textContent = timeStr;
         }
 
-        function getNowDateTimeLocal() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        // --- Date formatting helpers ---
+        function formatDate(dateStr, hideTime = false, useStandard = false) {
+            if (!dateStr) return 'Not set';
+            try {
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return 'Invalid date';
+                
+                const options = {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                };
+                
+                if (!hideTime) {
+                    options.hour = '2-digit';
+                    options.minute = '2-digit';
+                    if (useStandard) {
+                        options.hour12 = true;
+                    } else {
+                        options.hour12 = false;
+                    }
+                }
+                return date.toLocaleString('en-US', options);
+            } catch (e) {
+                return 'Invalid date';
+            }
+        }
+
+        function getDisplayDate(event) {
+            // If both start and end are set, show range
+            if (event.startDate && event.endDate) {
+                const start = formatDate(event.startDate, event.hideTime || false, useStandardTime);
+                const end = formatDate(event.endDate, event.hideTime || false, useStandardTime);
+                return `${start} → ${end}`;
+            }
+            // If only event date is set
+            if (event.eventDate) {
+                return formatDate(event.eventDate, event.hideTime || false, useStandardTime);
+            }
+            // Fallback to created date
+            return formatDate(event.createdAt, false, useStandardTime);
         }
 
         // --- Render events ---
@@ -682,25 +774,17 @@
                 nameSpan.className = 'event-name';
                 nameSpan.innerHTML = `<i class="fas fa-circle-check"></i> ${escapeHtml(ev.name)}`;
 
-                // Meta: time + date
-                const metaSpan = document.createElement('span');
-                metaSpan.className = 'event-meta';
-                const timeSpan = document.createElement('span');
-                timeSpan.className = 'event-time';
-                timeSpan.textContent = `⏱ ${formatTime(ev.durationSeconds || 0)}`;
+                // Date display
                 const dateSpan = document.createElement('span');
-                dateSpan.className = 'event-date';
-                // Show custom date if set, otherwise creation date
-                const displayDate = ev.customDate ? new Date(ev.customDate).toLocaleString('en-US', { hour12: false }) : (ev.createdAt || 'now');
-                dateSpan.textContent = `📅 ${displayDate}`;
-                metaSpan.appendChild(timeSpan);
-                metaSpan.appendChild(dateSpan);
+                dateSpan.className = 'event-date-range';
+                const displayText = getDisplayDate(ev);
+                dateSpan.innerHTML = `<i class="far fa-calendar-alt"></i> ${displayText}`;
 
                 // Actions
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'event-actions';
 
-                // Settings (cog) - opens modal for event
+                // Settings (cog)
                 const settingsBtn = document.createElement('button');
                 settingsBtn.className = 'settings-btn';
                 settingsBtn.innerHTML = '<i class="fas fa-cog"></i>';
@@ -732,7 +816,7 @@
                     });
                 }
 
-                // Delete / Erase (no confirmation for erase)
+                // Delete / Erase
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 if (currentTab === 'deleted') {
@@ -758,12 +842,11 @@
                 actionsDiv.appendChild(deleteBtn);
 
                 li.appendChild(nameSpan);
-                li.appendChild(metaSpan);
+                li.appendChild(dateSpan);
                 li.appendChild(actionsDiv);
                 eventList.appendChild(li);
             }
 
-            // Apply current styles to all items
             applyAllStyles();
         }
 
@@ -782,24 +865,16 @@
             if (!ev) return;
             currentEditingEventId = eventId;
             modalTitle.textContent = `Event: "${ev.name}"`;
-            globalSettingsSection.style.display = 'block'; // Keep global styles visible
+            globalSettingsSection.style.display = 'block';
             eventSettingsSection.style.display = 'block';
 
             // Populate event fields
             eventNameEdit.value = ev.name;
-            // Set datetime-local value if customDate exists, otherwise use current time
-            if (ev.customDate) {
-                const date = new Date(ev.customDate);
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                eventDateTime.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-            } else {
-                eventDateTime.value = getNowDateTimeLocal();
-            }
+            eventDateSingle.value = ev.eventDate || '';
+            eventStartDate.value = ev.startDate || '';
+            eventEndDate.value = ev.endDate || '';
             eventCreatedAt.value = ev.createdAt || 'Unknown';
+            hideTimeCheckbox.checked = ev.hideTime || false;
 
             settingsModal.classList.add('open');
             loadStylesIntoModal();
@@ -810,14 +885,13 @@
             currentEditingEventId = null;
         }
 
-        // Load styles from the current app container into modal inputs
+        // --- Load styles into modal ---
         function loadStylesIntoModal() {
             const container = document.getElementById('appContainer');
             const style = getComputedStyle(container);
-            const cardBg = style.backgroundColor || '#ffffff';
-            const cardBgHex = rgbToHex(cardBg);
-            cardBgColor.value = cardBgHex;
-            cardBgText.value = cardBgHex;
+            
+            cardBgColor.value = rgbToHex(style.backgroundColor || '#ffffff');
+            cardBgText.value = rgbToHex(style.backgroundColor || '#ffffff');
 
             const eventText = getComputedStyle(document.querySelector('.event-name') || document.createElement('div')).color || '#0b1e33';
             const eventTextHex = rgbToHex(eventText);
@@ -851,6 +925,8 @@
                 taskCardColor.value = '#ffffff';
                 taskCardText.value = '#ffffff';
             }
+
+            standardTimeCheckbox.checked = useStandardTime;
         }
 
         function rgbToHex(rgb) {
@@ -864,7 +940,7 @@
             return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
         }
 
-        // --- Apply styles from modal inputs ---
+        // --- Apply styles ---
         function applyAllStyles() {
             const cardBg = cardBgColor.value;
             const eventText = eventTextColor.value;
@@ -897,6 +973,11 @@
             document.querySelectorAll('.modal-box .settings-group label, .modal-box .settings-note, .modal-header h2').forEach(el => {
                 el.style.color = eventText;
             });
+
+            // Update standard time
+            useStandardTime = standardTimeCheckbox.checked;
+            updateClock();
+            renderEvents(); // Re-render to update date formats
         }
 
         // --- Sync color inputs ---
@@ -922,23 +1003,24 @@
             const name = eventNameInput.value.trim();
             if (name === '') { alert('Please enter an event name.'); return; }
 
-            const now = new Date();
-            const durationSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const now = new Date().toISOString();
 
             events.push({
                 id: nextId++,
                 name: name,
                 status: 'active',
-                durationSeconds: durationSec,
-                createdAt: now.toLocaleString('en-US', { hour12: false }),
-                customDate: null // will be set via event settings
+                createdAt: now,
+                eventDate: null,
+                startDate: null,
+                endDate: null,
+                hideTime: false
             });
 
             eventNameInput.value = '';
             renderEvents();
         }
 
-        // --- Save settings (global + event) ---
+        // --- Save settings ---
         function saveSettings() {
             // Apply global styles
             applyAllStyles();
@@ -948,14 +1030,14 @@
                 const ev = events.find(e => e.id === currentEditingEventId);
                 if (ev) {
                     const newName = eventNameEdit.value.trim();
-                    if (newName) {
-                        ev.name = newName;
-                    }
-                    // Update custom date
-                    if (eventDateTime.value) {
-                        ev.customDate = eventDateTime.value;
-                    }
-                    // Re-render to show updated name and date
+                    if (newName) ev.name = newName;
+                    
+                    ev.eventDate = eventDateSingle.value || null;
+                    ev.startDate = eventStartDate.value || null;
+                    ev.endDate = eventEndDate.value || null;
+                    ev.hideTime = hideTimeCheckbox.checked;
+
+                    // Logic: If both start and end are set, eventDate is ignored for display
                     renderEvents();
                 }
             }
@@ -985,43 +1067,52 @@
 
         // --- Init ---
         function init() {
-            // Sample events with custom dates
-            const now = new Date();
-            const yesterday = new Date(now);
+            const now = new Date().toISOString();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
-            
+
             events = [
                 { 
                     id: nextId++, 
-                    name: 'Morning standup', 
+                    name: 'Team Meeting', 
                     status: 'active', 
-                    durationSeconds: 900, 
-                    createdAt: now.toLocaleString('en-US', { hour12: false }),
-                    customDate: now.toISOString()
+                    createdAt: now,
+                    eventDate: now,
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false
                 },
                 { 
                     id: nextId++, 
-                    name: 'Code review', 
+                    name: 'Project Deadline', 
                     status: 'active', 
-                    durationSeconds: 1800, 
-                    createdAt: now.toLocaleString('en-US', { hour12: false }),
-                    customDate: null
+                    createdAt: now,
+                    eventDate: null,
+                    startDate: yesterday.toISOString(),
+                    endDate: tomorrow.toISOString(),
+                    hideTime: false
                 },
                 { 
                     id: nextId++, 
-                    name: 'Design sync', 
+                    name: 'Design Review', 
                     status: 'hidden', 
-                    durationSeconds: 1200, 
-                    createdAt: yesterday.toLocaleString('en-US', { hour12: false }),
-                    customDate: yesterday.toISOString()
+                    createdAt: yesterday.toISOString(),
+                    eventDate: yesterday.toISOString(),
+                    startDate: null,
+                    endDate: null,
+                    hideTime: true
                 },
                 { 
                     id: nextId++, 
-                    name: 'Old task', 
+                    name: 'Old Task', 
                     status: 'deleted', 
-                    durationSeconds: 600, 
-                    createdAt: yesterday.toLocaleString('en-US', { hour12: false }),
-                    customDate: null
+                    createdAt: yesterday.toISOString(),
+                    eventDate: null,
+                    startDate: null,
+                    endDate: null,
+                    hideTime: false
                 },
             ];
             const maxId = events.reduce((max, e) => Math.max(max, e.id), 0);
@@ -1029,24 +1120,29 @@
 
             renderEvents();
             setupTabs();
+            updateClock();
+            setInterval(updateClock, 1000);
 
             // Event listeners
             addEventBtn.addEventListener('click', addEvent);
             eventNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEvent(); });
 
-            // Global settings button
             globalSettingsBtn.addEventListener('click', openGlobalSettings);
-
-            // Modal close
             modalCloseBtn.addEventListener('click', closeSettingsModal);
             settingsModal.addEventListener('click', function(e) {
                 if (e.target === this) closeSettingsModal();
             });
 
-            // Save settings
             saveSettingsBtn.addEventListener('click', saveSettings);
 
-            // Apply initial styles
+            // Standard time checkbox
+            standardTimeCheckbox.addEventListener('change', function() {
+                useStandardTime = this.checked;
+                updateClock();
+                renderEvents();
+            });
+
+            // Load initial styles
             setTimeout(() => {
                 loadStylesIntoModal();
                 applyAllStyles();
