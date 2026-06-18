@@ -1274,6 +1274,10 @@
             border: 1px solid #d1d9e6;
         }
 
+        .ampm-hint.hidden {
+            display: none;
+        }
+
         /* Schedule Color Picker in Event Settings */
         .schedule-color-picker {
             display: flex;
@@ -1715,7 +1719,7 @@
                 <input type="checkbox" id="hideTimeCheckbox">
                 <span>Show dates without time (date only)</span>
             </div>
-            <div class="settings-note">When enabled, removes time from all date displays for this event and switches inputs to date-only.</div>
+            <div class="settings-note">When enabled, removes time from all date displays and switches inputs to date-only.</div>
         </div>
 
         <div class="settings-group">
@@ -2652,9 +2656,9 @@
                 eventEndDate.value = endValue ? endValue.split('T')[0] : '';
                 
                 // Hide AM/PM hints
-                eventDateHint.style.display = 'none';
-                startDateHint.style.display = 'none';
-                endDateHint.style.display = 'none';
+                eventDateHint.classList.add('hidden');
+                startDateHint.classList.add('hidden');
+                endDateHint.classList.add('hidden');
             } else {
                 // Convert back to datetime-local
                 eventDateSingle.type = 'datetime-local';
@@ -2667,9 +2671,9 @@
                 eventEndDate.value = endValue || '';
                 
                 // Show AM/PM hints
-                eventDateHint.style.display = 'flex';
-                startDateHint.style.display = 'flex';
-                endDateHint.style.display = 'flex';
+                eventDateHint.classList.remove('hidden');
+                startDateHint.classList.remove('hidden');
+                endDateHint.classList.remove('hidden');
             }
         }
 
