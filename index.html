@@ -587,10 +587,13 @@
             position: sticky;
             left: 0;
             z-index: 30;
+            display: flex;
+            flex-direction: column;
         }
 
         .schedule-time-slot {
             height: 60px;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -598,6 +601,7 @@
             color: #64748b;
             border-bottom: 1px solid #f1f5f9;
             font-weight: 500;
+            flex-shrink: 0;
         }
 
         .schedule-time-slot:last-child {
@@ -612,6 +616,8 @@
             border: 1px solid #e9edf2;
             min-width: 80px;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .schedule-day-column.today-column {
@@ -627,10 +633,8 @@
             padding: 0.3rem 0;
             border-bottom: 2px solid #e9edf2;
             margin-bottom: 0.3rem;
-            position: sticky;
-            top: 0;
             background: inherit;
-            z-index: 5;
+            flex-shrink: 0;
         }
 
         .schedule-day-header.today-header {
@@ -646,13 +650,16 @@
 
         .schedule-day-grid {
             position: relative;
+            flex: 1;
             min-height: 720px;
         }
 
         .schedule-hour-slot {
             height: 60px;
+            min-height: 60px;
             border-bottom: 1px solid #f1f5f9;
             position: relative;
+            flex-shrink: 0;
         }
 
         .schedule-hour-slot:last-child {
@@ -1372,9 +1379,9 @@
             .calendar-day .day-events .cal-event { font-size: 0.5rem; }
             .schedule-container { min-width: 500px; }
             .schedule-time-column { flex: 0 0 40px; min-width: 40px; }
-            .schedule-time-slot { height: 40px; font-size: 0.6rem; }
+            .schedule-time-slot { height: 40px; min-height: 40px; font-size: 0.6rem; }
             .schedule-day-grid { min-height: 480px; }
-            .schedule-hour-slot { height: 40px; }
+            .schedule-hour-slot { height: 40px; min-height: 40px; }
             .schedule-event { min-height: 16px; padding: 0.1rem 0.2rem; }
             .schedule-event .event-name-small { font-size: 0.5rem; }
             .schedule-event .event-time-range { font-size: 0.4rem; }
@@ -1407,7 +1414,8 @@
             .overlap-item .overlap-time { font-size: 0.65rem; }
             .schedule-date-header .date-header-item .header-events .header-event { font-size: 0.4rem; }
             .schedule-time-column { flex: 0 0 30px; min-width: 30px; }
-            .schedule-time-slot { font-size: 0.5rem; height: 30px; }
+            .schedule-time-slot { font-size: 0.5rem; height: 30px; min-height: 30px; }
+            .schedule-hour-slot { height: 30px; min-height: 30px; }
         }
     </style>
 </head>
@@ -2223,7 +2231,7 @@
 
             const today = new Date();
             
-            // Build schedule HTML
+            // Build schedule HTML - both time column and day columns use flex with consistent heights
             let html = '';
             
             // Time column - all 24 hours from 00:00 to 23:00
